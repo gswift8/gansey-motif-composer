@@ -1,24 +1,24 @@
-# Gansey Studio v0.9.1 — Motif Option Control Fix
+# Gansey Studio v0.9.2 — Move Button Repair
 
-This patch repairs the controls that appear after adding a motif.
+This patch fixes Move Left and Move Right in motif and spacer cards.
+
+## Cause
+
+When a number field or dropdown still had focus, pressing a toolbar button could
+first trigger that field's `change` event. The composer then rebuilt the card before
+the button's `click` event reached the delegated handler, so the move action was lost.
 
 ## Fixed
 
-- Horizontal repeats
-- Vertical behavior
-- Vertical repeats
-- Alignment
-- Row offset
-- Unused-row texture
-- Gap before
-- Gap after
+- Move Left
+- Move Right
+- Mirror
+- Duplicate
+- Reliable toolbar actions even immediately after editing a motif option
+- Clear status messages when a block is already first or last
 
-The modular v0.9.0 build attached these handlers separately every time a block was
-rendered. v0.9.1 replaces that with one stable handler on the Section Composer,
-using each block's section ID and current block index.
-
-Dropdown changes apply immediately. Number fields apply when you leave the field,
-use the stepper arrows, or press Enter.
+Toolbar pointer actions now run on `pointerdown`, before a focused editor control can
+re-render the card. Keyboard activation remains supported through `click`.
 
 ## GitHub update
 
@@ -28,4 +28,4 @@ Replace:
 - `js/composer.js`
 - `js/io.js`
 
-Uploading the entire v0.9.1 folder is also fine. Keep the `css` and `js` folders intact.
+Uploading the whole v0.9.2 folder is also safe. Keep `css/` and `js/` intact.

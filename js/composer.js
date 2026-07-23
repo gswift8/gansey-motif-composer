@@ -113,12 +113,7 @@ $("sectionStack").addEventListener("click",e=>{
 });
 
 
-$("sectionStack").addEventListener("click",e=>{
- const button=e.target.closest("button[data-block-action]");
- if(!button)return;
- e.preventDefault();
- e.stopPropagation();
-
+function runBlockAction(button){
  const card=button.closest(".panel-block");
  if(!card)return;
 
@@ -127,25 +122,60 @@ $("sectionStack").addEventListener("click",e=>{
  if(!section||!Array.isArray(section.items)||!Number.isInteger(index)||!section.items[index])return;
 
  const action=button.dataset.blockAction;
+
+ if(action==="left"&&index===0){
+  $("composerStatus").textContent="This block is already first.";
+  return;
+ }
+ if(action==="right"&&index===section.items.length-1){
+  $("composerStatus").textContent="This block is already last.";
+  return;
+ }
+
  remember();
 
  if(action==="mirror"){
   section.items[index].mirrored=!section.items[index].mirrored;
- }
- if(action==="duplicate"){
+  $("composerStatus").textContent="Mirrored block.";
+ }else if(action==="duplicate"){
   const copy=JSON.parse(JSON.stringify(section.items[index]));
   section.items.splice(index+1,0,copy);
   $("composerStatus").textContent="Duplicated block.";
- }
- if(action==="left"&&index>0){
-  [section.items[index-1],section.items[index]]=[section.items[index],section.items[index-1]];
- }
- if(action==="right"&&index<section.items.length-1){
-  [section.items[index+1],section.items[index]]=[section.items[index],section.items[index+1]];
+ }else if(action==="left"){
+  const [moved]=section.items.splice(index,1);
+  section.items.splice(index-1,0,moved);
+  $("composerStatus").textContent="Moved block left.";
+ }else if(action==="right"){
+  const [moved]=section.items.splice(index,1);
+  section.items.splice(index+1,0,moved);
+  $("composerStatus").textContent="Moved block right.";
+ }else{
+  return;
  }
 
  selectedSectionId=section.id;
  renderPanel();
+}
+
+// Run pointer actions before a focused number/select control can emit `change`
+// and rebuild the composer. This prevents the original button from becoming
+// detached before its click reaches the delegated handler.
+$("sectionStack").addEventListener("pointerdown",e=>{
+ const button=e.target.closest("button[data-block-action]");
+ if(!button||e.button!==0)return;
+ e.preventDefault();
+ e.stopPropagation();
+ runBlockAction(button);
+});
+
+// Keyboard activation still uses click. Pointer-generated clicks are ignored
+// because pointerdown already handled them.
+$("sectionStack").addEventListener("click",e=>{
+ const button=e.target.closest("button[data-block-action]");
+ if(!button)return;
+ e.preventDefault();
+ e.stopPropagation();
+ if(e.detail===0)runBlockAction(button);
 });
 
 
