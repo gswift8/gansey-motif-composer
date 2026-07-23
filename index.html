@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.8.0</title>
+<title>Gansey Studio v0.8.1</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -157,7 +157,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels from draggable vertical bands, horizontal bands, and row dividers.</div>
   </div>
-  <div class="badge">Bidirectional Band Composer v0.8.0</div>
+  <div class="badge">Bidirectional Band Composer v0.8.1</div>
 </header>
 
 <main>
@@ -240,7 +240,7 @@ button:hover{transform:translateY(-1px)}
       <label class="ghost" style="padding:9px 12px;border-radius:12px;cursor:pointer">
         Import motif library<input id="importLibrary" type="file" accept=".json" hidden>
       </label>
-      <button class="ghost" id="reloadLibrary">Reload motifs.json</button>
+      <button class="ghost" id="reloadLibrary" title="Discard the current in-memory motif library and reload the hosted default file">Reset to hosted motif library</button>
     </div>
     <div id="libraryStatus" class="small" style="margin-top:8px"></div>
     <div id="library" class="library" style="margin-top:12px"></div>
@@ -687,7 +687,10 @@ function renderBandItems(section,host){
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
   const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.draggable=true;
-  block.ondragstart=e=>{dragIndex=index;block.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+  block.ondragstart=e=>{
+   if(e.target.closest("button,input,select,label")){e.preventDefault();return}
+   dragIndex=index;block.classList.add("dragging");e.dataTransfer.effectAllowed="move"
+  };
   block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging")};
   block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault()};
   block.ondrop=e=>{
@@ -720,16 +723,19 @@ function renderBandItems(section,host){
   }
   const tools=document.createElement("div");tools.className="panel-toolbar";
   tools.innerHTML=(item.type==="motif"?'<button data-a="mirror">Mirror</button>':'')+'<button data-a="duplicate">Duplicate</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
-  tools.onclick=e=>{
-   const a=e.target.dataset.a;if(!a)return;remember();
-   if(a==="mirror")item.mirrored=!item.mirrored;
-   if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
-   if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
-   if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
-   renderPanel();
-  };
+  tools.querySelectorAll("button[data-a]").forEach(button=>{
+   button.onclick=e=>{
+    e.preventDefault();e.stopPropagation();
+    const a=button.dataset.a;remember();
+    if(a==="mirror")item.mirrored=!item.mirrored;
+    if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
+    if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
+    if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
+    renderPanel();
+   };
+  });
   block.appendChild(tools);
-  block.querySelector(".remove").onclick=()=>{remember();panel.splice(index,1);renderPanel()};
+  block.querySelector(".remove").onclick=e=>{e.preventDefault();e.stopPropagation();remember();panel.splice(index,1);renderPanel()};
   block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{
    remember();item[el.dataset.field]=el.tagName==="INPUT"?Number(el.value):el.value;renderPanel()
   });
@@ -779,16 +785,19 @@ function renderPanel(){
   title.innerHTML=`<span class="section-badge">${section.type==="field"?"VERTICAL BAND":section.type==="band"?"HORIZONTAL BAND":"ROW DIVIDER"}</span><h3>${section.name||"Section"}</h3><div class="section-summary">${sectionHeight(section)} rows</div>`;
   const tools=document.createElement("div");tools.className="section-tools";
   tools.innerHTML='<button data-s="select">Select</button><button data-s="duplicate">Duplicate</button><button data-s="up">↑</button><button data-s="down">↓</button><button class="danger" data-s="delete">Delete</button>';
-  tools.onclick=e=>{
-   const a=e.target.dataset.s;if(!a)return;e.stopPropagation();
-   if(a==="select"){selectedSectionId=section.id;renderPanel();return}
-   remember();
-   if(a==="duplicate"){const copy=JSON.parse(JSON.stringify(section));copy.id=uid();sections.splice(index+1,0,copy);selectedSectionId=copy.id}
-   if(a==="up"&&index>0)[sections[index-1],sections[index]]=[sections[index],sections[index-1]];
-   if(a==="down"&&index<sections.length-1)[sections[index+1],sections[index]]=[sections[index],sections[index+1]];
-   if(a==="delete"){sections.splice(index,1);selectedSectionId=sections[Math.min(index,sections.length-1)]?.id||null}
-   renderPanel();
-  };
+  tools.querySelectorAll("button[data-s]").forEach(button=>{
+   button.onclick=e=>{
+    e.preventDefault();e.stopPropagation();
+    const a=button.dataset.s;
+    if(a==="select"){selectedSectionId=section.id;renderPanel();return}
+    remember();
+    if(a==="duplicate"){const copy=JSON.parse(JSON.stringify(section));copy.id=uid();sections.splice(index+1,0,copy);selectedSectionId=copy.id}
+    if(a==="up"&&index>0)[sections[index-1],sections[index]]=[sections[index],sections[index-1]];
+    if(a==="down"&&index<sections.length-1)[sections[index+1],sections[index]]=[sections[index],sections[index+1]];
+    if(a==="delete"){sections.splice(index,1);selectedSectionId=sections[Math.min(index,sections.length-1)]?.id||null}
+    renderPanel();
+   };
+  });
   head.append(title,tools);card.appendChild(head);
 
   if(section.type==="field"){
@@ -801,10 +810,14 @@ function renderPanel(){
    card.appendChild(settings);
    const actions=document.createElement("div");actions.className="builder-actions";
    actions.innerHTML='<button class="ghost" data-add="knit">+ Knit spacer</button><button class="ghost" data-add="purl">+ Purl spacer</button><span class="small">Blocks extend vertically according to their own repeat and alignment settings.</span>';
-   actions.onclick=e=>{
-    const a=e.target.dataset.add;if(!a)return;remember();
-    section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});renderPanel()
-   };
+   actions.querySelectorAll("button[data-add]").forEach(button=>{
+    button.onclick=e=>{
+     e.preventDefault();e.stopPropagation();
+     const a=button.dataset.add;remember();
+     section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});
+     renderPanel();
+    };
+   });
    card.appendChild(actions);
    renderBandItems(section,card);
   }else if(section.type==="band"){
@@ -821,10 +834,14 @@ function renderPanel(){
    card.appendChild(settings);
    const actions=document.createElement("div");actions.className="builder-actions";
    actions.innerHTML='<button class="ghost" data-add="knit">+ Knit spacer</button><button class="ghost" data-add="purl">+ Purl spacer</button><span class="small">These blocks form one unit; the complete unit repeats across the panel.</span>';
-   actions.onclick=e=>{
-    const a=e.target.dataset.add;if(!a)return;remember();
-    section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});renderPanel()
-   };
+   actions.querySelectorAll("button[data-add]").forEach(button=>{
+    button.onclick=e=>{
+     e.preventDefault();e.stopPropagation();
+     const a=button.dataset.add;remember();
+     section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});
+     renderPanel();
+    };
+   });
    card.appendChild(actions);
    renderBandItems(section,card);
    const leftover=unitW?target%unitW:target;
@@ -937,9 +954,11 @@ $("importLibrary").onchange=e=>{
  };
  r.readAsText(f);
 };
-$("reloadLibrary").onclick=()=>loadExternalLibrary(true);
+$("reloadLibrary").onclick=()=>{
+ if(confirm("Reset the current motif library to the hosted motifs.json file? Any unsaved imported or edited library changes will be discarded."))loadExternalLibrary(true);
+};
 
-function project(){return {version:8,motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId}}
+function project(){return {version:8.1,motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId}}
 function restore(p){
  motifs=p.motifs||motifs;
  panels=p.panels||panels;
@@ -953,16 +972,16 @@ function restore(p){
 }
 $("exportJson").onclick=()=>{
  const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.8.json";a.click();URL.revokeObjectURL(a.href)
+ a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.8.1.json";a.click();URL.revokeObjectURL(a.href)
 };
 $("importJson").onchange=e=>{
  const f=e.target.files[0];if(!f)return;const r=new FileReader();
  r.onload=()=>{try{restore(JSON.parse(r.result))}catch(error){alert("That JSON file could not be read.")}};
  r.readAsText(f)
 };
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV8",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV81",JSON.stringify(project()));alert("Project saved in this browser.")};
 $("loadLocal").onclick=()=>{
- const raw=localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
+ const raw=localStorage.getItem("ganseyStudioV81")||localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
  raw?restore(JSON.parse(raw)):alert("No saved project found.")
 };
 

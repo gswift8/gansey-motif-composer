@@ -1,29 +1,22 @@
-# Gansey Studio v0.8.0 — Bidirectional Band Composer
+# Gansey Studio v0.8.1 — Interaction Fix
 
-## Major changes
+This patch fixes controls inside draggable motif and spacer cards.
 
-- "Field section" is now called **Vertical band**.
-- Vertical and Horizontal bands both accept the same draggable motif and spacer blocks.
-- A Horizontal band's ordered block list forms one repeat unit.
-- That complete unit is tiled across the target stitch width.
-- Both band types support block duplication, reordering, mirroring, gaps, and spacers.
-- A new Layout Tree shows the hierarchy of the active garment panel.
-- Every edit feeds directly into the Full Chart Preview.
+## Fixed
 
-## Horizontal band fitting
+- Duplicate motif and spacer buttons
+- Knit spacer and Purl spacer buttons in both band types
+- Section Duplicate, Move, Select, and Delete buttons
+- Remove buttons inside draggable blocks
+- Dragging no longer intercepts clicks on buttons, inputs, selects, or labels
 
-- Center whole units
-- Start at left
-- Custom left offset
-- Knit or purl edge filler
-- Mirror every other complete unit
-- Repeat the complete band vertically
+## Motif library reset
 
-## Migration
+The former `Reload motifs.json` button is now labeled:
 
-- Old Field sections become Vertical bands.
-- Old single-motif Horizontal bands become Horizontal bands containing one motif block.
-- v0.7 browser saves and project JSON remain loadable.
+`Reset to hosted motif library`
+
+It is intentional. It reloads the default `motifs.json` hosted beside `index.html` and discards unsaved in-memory library edits or imports. The app now asks for confirmation first.
 
 ## GitHub Pages
 
