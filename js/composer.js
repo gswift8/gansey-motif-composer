@@ -60,9 +60,6 @@ function renderBandItems(section,host){
    if(!section||!Array.isArray(section.items)||!section.items[blockIndex])return;
    remember();section.items.splice(blockIndex,1);selectedSectionId=section.id;renderPanel();
   };
-  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{
-   remember();item[el.dataset.field]=el.tagName==="INPUT"?Number(el.value):el.value;renderPanel()
-  });
   list.appendChild(block);
  });
  host.appendChild(list);
@@ -149,6 +146,44 @@ $("sectionStack").addEventListener("click",e=>{
 
  selectedSectionId=section.id;
  renderPanel();
+});
+
+
+function updateBlockOption(control){
+ const card=control.closest(".panel-block");
+ if(!card)return;
+
+ const section=panels[activePanel].find(s=>s.id===card.dataset.sectionId);
+ const index=Number(card.dataset.blockIndex);
+ if(!section||!Array.isArray(section.items)||!Number.isInteger(index)||!section.items[index])return;
+
+ const key=control.dataset.field;
+ let value;
+ if(control.tagName==="INPUT"&&control.type==="number"){
+  value=Number(control.value);
+  if(!Number.isFinite(value))return;
+ }else{
+  value=control.value;
+ }
+
+ remember();
+ section.items[index][key]=value;
+ selectedSectionId=section.id;
+ renderPanel();
+}
+
+$("sectionStack").addEventListener("change",e=>{
+ const control=e.target.closest("[data-field]");
+ if(!control)return;
+ e.stopPropagation();
+ updateBlockOption(control);
+});
+
+$("sectionStack").addEventListener("keydown",e=>{
+ const control=e.target.closest('input[data-field][type="number"]');
+ if(!control||e.key!=="Enter")return;
+ e.preventDefault();
+ updateBlockOption(control);
 });
 
 function renderPanel(){
