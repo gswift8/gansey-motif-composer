@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Motif Composer v0.2</title>
+<title>Gansey Studio v0.3</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -88,16 +88,31 @@ button:hover{transform:translateY(-1px)}
 .smart-box{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:12px}
 .suggestion{border:1px dashed var(--line);border-radius:14px;padding:10px;margin-top:8px;background:#fff}
 .repeat-note{padding:9px 11px;border-radius:12px;background:#fff7f7;border:1px solid #ffd1d1;font-size:.78rem;color:#7c4545}
+
+.builder-settings{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:9px;margin:14px 0}
+.builder-settings label{display:grid;gap:5px}
+.builder-settings input,.builder-settings select{width:100%}
+.block-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.block-controls label{display:grid;gap:4px;font-size:.7rem}
+.block-controls input,.block-controls select{width:100%;padding:6px 7px;font-size:.76rem}
+.block-type{display:inline-block;padding:3px 7px;border-radius:999px;background:#f1efff;font-size:.67rem;font-weight:900;margin-bottom:5px}
+.spacer-card{background:linear-gradient(180deg,#fffdf5,#fff)}
+.canvas-info{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0}
+.canvas-info strong{font-size:1rem}
+.preview-key{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:.72rem;color:var(--muted)}
+.key-swatch{display:inline-block;width:13px;height:13px;border:1px solid var(--line);vertical-align:-2px;margin-right:4px;background:white}
+.key-swatch.purl{background:var(--ink)}
+@media(max-width:700px){.builder-settings{grid-template-columns:1fr 1fr}.block-controls{grid-template-columns:1fr}}
 @media(max-width:950px){main{grid-template-columns:1fr;padding:14px}.filter-grid{grid-template-columns:1fr}.editor-top{grid-template-columns:1fr 74px 74px}header{padding:22px 16px 8px}}
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>Gansey Motif Composer</h1>
+    <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Prototype v0.2.1</div>
+  <div class="badge">Panel Builder v0.3</div>
 </header>
 
 <main>
@@ -170,11 +185,33 @@ button:hover{transform:translateY(-1px)}
 <section class="stack">
   <div class="card">
     <div class="row" style="justify-content:space-between">
-      <h2 style="margin:0">3. Panel builder</h2>
+      <h2 style="margin:0">3. Two-dimensional panel builder</h2>
       <div class="row">
-        <label>Target stitches <input id="targetWidth" type="number" min="1" value="49" style="width:80px"></label>
         <button class="primary" id="addSelected">Add selected motif</button>
       </div>
+    </div>
+
+    <div class="builder-settings">
+      <label>Target stitches
+        <input id="targetWidth" type="number" min="1" value="49">
+      </label>
+      <label>Panel height
+        <select id="panelHeightMode">
+          <option value="auto">Auto: tallest block</option>
+          <option value="fixed">Fixed row count</option>
+        </select>
+      </label>
+      <label>Fixed rows
+        <input id="panelHeight" type="number" min="1" value="18">
+      </label>
+      <label>Spacer width
+        <input id="spacerWidth" type="number" min="1" value="2">
+      </label>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <button class="ghost" id="addKnitSpacer">+ Knit spacer</button>
+      <button class="ghost" id="addPurlSpacer">+ Purl spacer</button>
+      <span class="small">Spacers fill the complete panel height.</span>
     </div>
 
     <div class="tabs">
@@ -187,9 +224,9 @@ button:hover{transform:translateY(-1px)}
 
     <div id="panelList" class="panel-list"></div>
     <div class="row" style="justify-content:space-between">
-      <div>
-        <div class="small">Current panel width</div>
-        <div id="totalWidth" class="total">0 stitches</div>
+      <div class="canvas-info">
+        <div><div class="small">Current panel width</div><div id="totalWidth" class="total">0 stitches</div></div>
+        <div><div class="small">Preview height</div><strong id="totalHeight">0 rows</strong></div>
       </div>
       <button class="danger" id="clearPanel">Clear panel</button>
     </div>
@@ -203,7 +240,7 @@ button:hover{transform:translateY(-1px)}
 
   <div class="card">
     <h2>4. Full chart preview</h2>
-    <div id="chartPreview" class="big-chart"></div>
+    <div id="chartPreview" class="big-chart"></div><div class="preview-key"><span><i class="key-swatch"></i>Knit filler</span><span><i class="key-swatch purl"></i>Purl/reverse-stockinette filler</span></div>
   </div>
 
   <div class="card">
@@ -226,6 +263,11 @@ const $=id=>document.getElementById(id);
 const uid=()=>crypto.randomUUID();
 let activeStitch="knit", editorData=[], selectedMotifId=null, activePanel="Front";
 let panels={Front:[],Back:[],Sleeve:[],Gusset:[],Shoulder:[]};
+let panelSettings={
+ Front:{heightMode:"auto",height:18},Back:{heightMode:"auto",height:18},
+ Sleeve:{heightMode:"auto",height:18},Gusset:{heightMode:"auto",height:18},
+ Shoulder:{heightMode:"auto",height:18}
+};
 
 const K="knit",P="purl",CR="cableR",CL="cableL",T="twist";
 const samples=[
@@ -324,44 +366,153 @@ $("clearGrid").onclick=()=>{editorData=blank(+$("motifWidth").value,+$("motifHei
 $("deleteMotif").onclick=()=>{if(!selectedMotifId)return;motifs=motifs.filter(m=>m.id!==selectedMotifId);Object.values(panels).forEach(p=>{for(let i=p.length-1;i>=0;i--)if(p[i].motifId===selectedMotifId)p.splice(i,1)});newMotif();renderPanel()};
 
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active");activePanel=b.dataset.panel;renderPanel();
+ document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ activePanel=b.dataset.panel;syncPanelSettingsUI();renderPanel();
 });
 function repeatSlice(m){
  const x=m.repeat.x-1,y=m.repeat.y-1,w=m.repeat.width,h=m.repeat.height;
  return m.data.slice(y,y+h).map(r=>r.slice(x,x+w));
 }
-function transformed(item){
- const m=motifs.find(x=>x.id===item.motifId);if(!m)return [[]];
- let d=repeatSlice(m).map(r=>[...r]);if(item.mirrored)d=d.map(r=>[...r].reverse());
- let out=Array.from({length:d.length},()=>[]);for(let n=0;n<item.repeat;n++)d.forEach((r,i)=>out[i].push(...r));return out;
+function normalizeItem(item){
+ if(item.type==="spacer")return Object.assign({width:2,stitch:K},item);
+ return Object.assign({
+   type:"motif",hRepeat:1,vRepeat:1,vMode:"count",align:"center",
+   rowOffset:0,gapBefore:0,gapAfter:0,fillStitch:K,mirrored:false
+ },item,{hRepeat:item.hRepeat||item.repeat||1});
 }
+function motifTile(item){
+ const m=motifs.find(x=>x.id===item.motifId);if(!m)return [[]];
+ let base=repeatSlice(m).map(r=>[...r]);
+ if(item.mirrored)base=base.map(r=>[...r].reverse());
+ let horizontal=Array.from({length:base.length},()=>[]);
+ for(let n=0;n<item.hRepeat;n++)base.forEach((r,i)=>horizontal[i].push(...r));
+ return horizontal;
+}
+function naturalHeight(item){
+ if(item.type==="spacer")return 0;
+ const m=motifs.find(x=>x.id===item.motifId);if(!m)return 0;
+ return m.repeat.height*Math.max(1,item.vRepeat);
+}
+function getPanelHeight(){
+ const set=panelSettings[activePanel];
+ if(set.heightMode==="fixed")return Math.max(1,+set.height||1);
+ const heights=panels[activePanel].map(raw=>{
+   const i=normalizeItem(raw);
+   if(i.type==="spacer")return 0;
+   if(i.vMode==="fill")return motifs.find(m=>m.id===i.motifId)?.repeat.height||1;
+   return naturalHeight(i)+Math.max(0,i.rowOffset);
+ });
+ return Math.max(1,...heights,1);
+}
+function verticalized(raw,panelH){
+ const item=normalizeItem(raw);
+ if(item.type==="spacer")return Array.from({length:panelH},()=>Array(item.width).fill(item.stitch));
+ const base=motifTile(item),unitH=base.length,w=base[0]?.length||0;
+ let reps=item.vMode==="fill"?Math.max(1,Math.ceil(panelH/unitH)):Math.max(1,item.vRepeat);
+ let tiled=[];
+ for(let n=0;n<reps;n++)tiled.push(...base.map(r=>[...r]));
+ if(item.vMode==="fill"&&tiled.length>panelH)tiled=tiled.slice(0,panelH);
+ const available=Math.max(0,panelH-tiled.length);
+ let top=0;
+ if(item.align==="center")top=Math.floor(available/2);
+ if(item.align==="bottom")top=available;
+ top=Math.max(0,Math.min(available,top+Number(item.rowOffset||0)));
+ let rows=Array.from({length:panelH},(_,r)=>{
+   if(r>=top&&r<top+tiled.length)return tiled[r-top]||Array(w).fill(item.fillStitch);
+   return Array(w).fill(item.fillStitch);
+ });
+ const before=Math.max(0,+item.gapBefore||0),after=Math.max(0,+item.gapAfter||0);
+ if(before||after)rows=rows.map(r=>[
+   ...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)
+ ]);
+ return rows;
+}
+function itemWidth(raw){
+ const i=normalizeItem(raw);
+ if(i.type==="spacer")return i.width;
+ const m=motifs.find(x=>x.id===i.motifId);
+ return m?(m.repeat.width*i.hRepeat+i.gapBefore+i.gapAfter):0;
+}
+function syncPanelSettingsUI(){
+ const s=panelSettings[activePanel];
+ $("panelHeightMode").value=s.heightMode;$("panelHeight").value=s.height;
+ $("panelHeight").disabled=s.heightMode!=="fixed";
+}
+function control(label,html){return `<label>${label}${html}</label>`}
 function renderPanel(){
  const panel=panels[activePanel],list=$("panelList");list.innerHTML="";
- if(!panel.length)list.innerHTML='<div class="empty">Select a motif and add its repeat unit to this panel.</div>';
- panel.forEach((item,index)=>{
-  const m=motifs.find(x=>x.id===item.motifId);if(!m)return;const d=transformed(item);
-  const block=document.createElement("div");block.className="panel-block";
-  block.innerHTML=`<button class="remove danger">×</button><h3>${m.name}</h3><div class="meta">${m.repeat.width*item.repeat} sts · repeat ×${item.repeat}${item.mirrored?" · mirrored":""}</div>`;
+ if(!panel.length)list.innerHTML='<div class="empty">Add motifs and spacers. Each block can repeat and align vertically.</div>';
+ panel.forEach((raw,index)=>{
+  const item=normalizeItem(raw);panel[index]=item;
+  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");
+  if(item.type==="spacer"){
+   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills panel height</div>`;
+   const controls=document.createElement("div");controls.className="block-controls";
+   controls.innerHTML=control("Width",`<input data-field="width" type="number" min="1" value="${item.width}">`)+
+     control("Texture",`<select data-field="stitch"><option value="knit"${item.stitch===K?" selected":""}>Knit</option><option value="purl"${item.stitch===P?" selected":""}>Purl</option></select>`);
+   block.appendChild(controls);
+  }else{
+   const m=motifs.find(x=>x.id===item.motifId);if(!m)return;
+   const d=motifTile(item);
+   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">MOTIF</span><h3>${m.name}</h3>
+   <div class="meta">${itemWidth(item)} sts total · ${m.repeat.height}-row unit</div>`;
+   block.appendChild(motifPreview({...m,repeat:{x:1,y:1,width:d[0].length,height:d.length}},d));
+   const controls=document.createElement("div");controls.className="block-controls";
+   controls.innerHTML=
+    control("Horizontal repeats",`<input data-field="hRepeat" type="number" min="1" value="${item.hRepeat}">`)+
+    control("Vertical behavior",`<select data-field="vMode"><option value="count"${item.vMode==="count"?" selected":""}>Set repeats</option><option value="fill"${item.vMode==="fill"?" selected":""}>Fill panel height</option></select>`)+
+    control("Vertical repeats",`<input data-field="vRepeat" type="number" min="1" value="${item.vRepeat}" ${item.vMode==="fill"?"disabled":""}>`)+
+    control("Alignment",`<select data-field="align"><option value="top"${item.align==="top"?" selected":""}>Top</option><option value="center"${item.align==="center"?" selected":""}>Center</option><option value="bottom"${item.align==="bottom"?" selected":""}>Bottom</option></select>`)+
+    control("Row offset",`<input data-field="rowOffset" type="number" value="${item.rowOffset}">`)+
+    control("Unused rows",`<select data-field="fillStitch"><option value="knit"${item.fillStitch===K?" selected":""}>Knit</option><option value="purl"${item.fillStitch===P?" selected":""}>Purl</option></select>`)+
+    control("Gap before",`<input data-field="gapBefore" type="number" min="0" value="${item.gapBefore}">`)+
+    control("Gap after",`<input data-field="gapAfter" type="number" min="0" value="${item.gapAfter}">`);
+   block.appendChild(controls);
+   const tools=document.createElement("div");tools.className="panel-toolbar";
+   tools.innerHTML='<button data-a="mirror">Mirror</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
+   tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;
+    if(a==="mirror")item.mirrored=!item.mirrored;
+    if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
+    if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
+    renderPanel()
+   };block.appendChild(tools);
+  }
   block.querySelector(".remove").onclick=()=>{panel.splice(index,1);renderPanel()};
-  block.appendChild(motifPreview({...m,repeat:{x:1,y:1,width:d[0].length,height:d.length}},d));
-  const tools=document.createElement("div");tools.className="panel-toolbar";tools.innerHTML='<button data-a="less">− repeat</button><button data-a="more">+ repeat</button><button data-a="mirror">mirror</button><button data-a="left">←</button><button data-a="right">→</button>';
-  tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;if(a==="less")item.repeat=Math.max(1,item.repeat-1);if(a==="more")item.repeat++;
-   if(a==="mirror")item.mirrored=!item.mirrored;if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
-   if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];renderPanel()};
-  block.appendChild(tools);list.appendChild(block);
+  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{
+    const f=el.dataset.field;
+    item[f]=el.tagName==="INPUT"?Number(el.value):el.value;
+    renderPanel();
+  });
+  list.appendChild(block);
  });renderChart();
 }
-$("addSelected").onclick=()=>{if(!selectedMotifId)return alert("Select a motif first.");panels[activePanel].push({motifId:selectedMotifId,repeat:1,mirrored:false});renderPanel()};
-$("clearPanel").onclick=()=>{panels[activePanel]=[];renderPanel()};$("targetWidth").oninput=renderChart;
+$("addSelected").onclick=()=>{
+ if(!selectedMotifId)return alert("Select a motif first.");
+ panels[activePanel].push(normalizeItem({type:"motif",motifId:selectedMotifId}));
+ renderPanel()
+};
+function addSpacer(stitch){
+ panels[activePanel].push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch});
+ renderPanel();
+}
+$("addKnitSpacer").onclick=()=>addSpacer(K);
+$("addPurlSpacer").onclick=()=>addSpacer(P);
+$("clearPanel").onclick=()=>{panels[activePanel]=[];renderPanel()};
+$("targetWidth").oninput=renderChart;
+$("panelHeightMode").onchange=()=>{
+ panelSettings[activePanel].heightMode=$("panelHeightMode").value;syncPanelSettingsUI();renderPanel()
+};
+$("panelHeight").oninput=()=>{panelSettings[activePanel].height=Math.max(1,+$("panelHeight").value||1);renderPanel()};
 
 function renderChart(){
- const panel=panels[activePanel],total=panel.reduce((s,i)=>{const m=motifs.find(x=>x.id===i.motifId);return s+(m?m.repeat.width*i.repeat:0)},0),target=+$("targetWidth").value;
+ const panel=panels[activePanel],total=panel.reduce((s,i)=>s+itemWidth(i),0),target=+$("targetWidth").value,panelH=getPanelHeight();
  $("totalWidth").textContent=`${total} stitches`;$("totalWidth").className="total "+(total===target?"target-ok":"target-bad");
- const p=$("chartPreview");p.innerHTML="";if(!panel.length){p.innerHTML='<div class="empty">The assembled repeat chart will appear here.</div>';return}
- const chunks=panel.map(transformed),maxH=Math.max(...chunks.map(d=>d.length));
- const padded=chunks.map(d=>{const w=d[0]?.length||0;return Array.from({length:maxH},(_,r)=>r<maxH-d.length?Array(w).fill(K):d[r-(maxH-d.length)])});
- const rows=Array.from({length:maxH},(_,r)=>padded.flatMap(c=>c[r]));
- const g=document.createElement("div");g.className="composed-grid";g.style.gridTemplateColumns=`repeat(${total},19px)`;
+ $("totalHeight").textContent=`${panelH} rows`;
+ const p=$("chartPreview");p.innerHTML="";
+ if(!panel.length){p.innerHTML='<div class="empty">The two-dimensional assembled chart will appear here.</div>';return}
+ const chunks=panel.map(i=>verticalized(i,panelH));
+ const rows=Array.from({length:panelH},(_,r)=>chunks.flatMap(c=>c[r]||[]));
+ const g=document.createElement("div");g.className="composed-grid";g.style.gridTemplateColumns=`repeat(${Math.max(1,total)},19px)`;
  rows.forEach(row=>row.forEach(v=>{const c=document.createElement("div");c.className="composed-cell "+v;g.appendChild(c)}));p.appendChild(g);
 }
 $("smartSuggest").onclick=()=>{
@@ -376,18 +527,26 @@ $("smartSuggest").onclick=()=>{
  combos.slice(0,4).forEach((combo,i)=>{
    const d=document.createElement("div");d.className="suggestion";
    d.innerHTML=`<strong>Option ${i+1}</strong><br>${combo.filter(x=>x.r).map(x=>`${x.m.name} × ${x.r}`).join(" + ")} <button data-i="${i}" style="float:right">Use</button>`;
-   d.querySelector("button").onclick=()=>{panels[activePanel]=combo.filter(x=>x.r).map(x=>({motifId:x.m.id,repeat:x.r,mirrored:false}));renderPanel()};s.appendChild(d);
+   d.querySelector("button").onclick=()=>{panels[activePanel]=combo.filter(x=>x.r).map(x=>normalizeItem({type:"motif",motifId:x.m.id,hRepeat:x.r}));renderPanel()};s.appendChild(d);
  });
 };
 
-function project(){return {version:2,motifs,panels,targetWidth:+$("targetWidth").value,activePanel}}
-function restore(p){motifs=p.motifs||[];panels=p.panels||panels;$("targetWidth").value=p.targetWidth||49;activePanel=p.activePanel||"Front";selectedMotifId=null;familyOptions();renderLibrary();renderPanel()}
-$("exportJson").onclick=()=>{const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-project-v0.2.1.json";a.click();URL.revokeObjectURL(a.href)};
+function project(){return {version:3,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
+function restore(p){
+ motifs=p.motifs||[];
+ panels=p.panels||panels;
+ panelSettings=p.panelSettings||panelSettings;
+ Object.keys(panels).forEach(k=>panels[k]=panels[k].map(normalizeItem));
+ $("targetWidth").value=p.targetWidth||49;activePanel=p.activePanel||"Front";selectedMotifId=null;
+ document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("active",x.dataset.panel===activePanel));
+ syncPanelSettingsUI();familyOptions();renderLibrary();renderPanel()
+}
+$("exportJson").onclick=()=>{const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.3.json";a.click();URL.revokeObjectURL(a.href)};
 $("importJson").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{restore(JSON.parse(r.result))}catch{alert("That JSON file could not be read.")}};r.readAsText(f)};
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyComposerV2",JSON.stringify(project()));alert("Project saved in this browser.")};
-$("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved v0.2 project found.")};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV3",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyStudioV3")||localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved project found.")};
 
-newMotif();selectedMotifId=motifs[0].id;loadMotif(motifs[0]);renderLibrary();renderPanel();
+newMotif();selectedMotifId=motifs[0].id;loadMotif(motifs[0]);renderLibrary();syncPanelSettingsUI();renderPanel();
 </script>
 </body>
 </html>
