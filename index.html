@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.4.1</title>
+<title>Gansey Studio v0.4.2</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -121,7 +121,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Visual Composer v0.4.1</div>
+  <div class="badge">Visual Composer v0.4.2</div>
 </header>
 
 <main>
@@ -477,14 +477,26 @@ function renderPanel(){
    controls.innerHTML=control("Width",`<input data-field="width" type="number" min="1" value="${item.width}">`)+
      control("Texture",`<select data-field="stitch"><option value="knit"${item.stitch===K?" selected":""}>Knit</option><option value="purl"${item.stitch===P?" selected":""}>Purl</option></select>`);
    block.appendChild(controls);
-   const tools=document.createElement("div");tools.className="panel-toolbar";
-   tools.innerHTML='<button data-a="duplicate">Duplicate</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
-   tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;remember();
-    if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
-    if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
-    if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
-    renderPanel()
-   };block.appendChild(tools);
+   const spacerTools=document.createElement("div");
+   spacerTools.className="panel-toolbar";
+   spacerTools.innerHTML='<button type="button" data-a="left">← Move</button><button type="button" data-a="right">Move →</button>';
+   spacerTools.addEventListener("click",e=>{
+    const action=e.target.dataset.a;
+    if(!action)return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(action==="left"&&index>0){
+      remember();
+      [panel[index-1],panel[index]]=[panel[index],panel[index-1]];
+      renderPanel();
+    }
+    if(action==="right"&&index<panel.length-1){
+      remember();
+      [panel[index+1],panel[index]]=[panel[index],panel[index+1]];
+      renderPanel();
+    }
+   });
+   block.appendChild(spacerTools);
   }else{
    const m=motifs.find(x=>x.id===item.motifId);if(!m)return;
    const d=motifTile(item);
