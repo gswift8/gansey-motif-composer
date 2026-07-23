@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.3</title>
+<title>Gansey Studio v0.4</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -102,6 +102,15 @@ button:hover{transform:translateY(-1px)}
 .preview-key{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:.72rem;color:var(--muted)}
 .key-swatch{display:inline-block;width:13px;height:13px;border:1px solid var(--line);vertical-align:-2px;margin-right:4px;background:white}
 .key-swatch.purl{background:var(--ink)}
+
+.motif-card[draggable="true"]{cursor:grab}.motif-card[draggable="true"]:active{cursor:grabbing}
+.panel-list.drag-over{outline:3px dashed var(--teal);outline-offset:4px;border-radius:16px;background:rgba(56,213,197,.06)}
+.panel-block{cursor:grab;transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease}.panel-block:active{cursor:grabbing}
+.panel-block.dragging{opacity:.45;transform:scale(.98)}.panel-block.drop-before{box-shadow:-7px 0 0 var(--teal)}.panel-block.drop-after{box-shadow:7px 0 0 var(--teal)}
+.builder-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}.width-breakdown{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.width-chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:.73rem}.width-chip strong{margin-right:4px}
+.drop-hint{border:2px dashed var(--line);border-radius:16px;padding:16px;min-width:240px;display:grid;place-items:center;color:var(--muted);text-align:center;background:rgba(255,255,255,.55)}
+.undo-status{font-size:.72rem;color:var(--muted);margin-left:auto}
 @media(max-width:700px){.builder-settings{grid-template-columns:1fr 1fr}.block-controls{grid-template-columns:1fr}}
 @media(max-width:950px){main{grid-template-columns:1fr;padding:14px}.filter-grid{grid-template-columns:1fr}.editor-top{grid-template-columns:1fr 74px 74px}header{padding:22px 16px 8px}}
 </style>
@@ -112,7 +121,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Panel Builder v0.3</div>
+  <div class="badge">Visual Composer v0.4</div>
 </header>
 
 <main>
@@ -208,10 +217,13 @@ button:hover{transform:translateY(-1px)}
         <input id="spacerWidth" type="number" min="1" value="2">
       </label>
     </div>
-    <div class="row" style="margin-bottom:12px">
+    <div class="builder-actions">
       <button class="ghost" id="addKnitSpacer">+ Knit spacer</button>
       <button class="ghost" id="addPurlSpacer">+ Purl spacer</button>
-      <span class="small">Spacers fill the complete panel height.</span>
+      <button class="ghost" id="undoBtn">↶ Undo</button>
+      <button class="ghost" id="redoBtn">↷ Redo</button>
+      <span class="small">Drag motifs from the library into the panel, then drag blocks to reorder.</span>
+      <span class="undo-status" id="historyStatus"></span>
     </div>
 
     <div class="tabs">
@@ -268,6 +280,14 @@ let panelSettings={
  Sleeve:{heightMode:"auto",height:18},Gusset:{heightMode:"auto",height:18},
  Shoulder:{heightMode:"auto",height:18}
 };
+let undoStack=[],redoStack=[],historyLock=false,dragIndex=null;
+function snapshot(){return JSON.stringify({panels,panelSettings,targetWidth:+$("targetWidth").value})}
+function remember(){if(historyLock)return;undoStack.push(snapshot());if(undoStack.length>80)undoStack.shift();redoStack=[];updateHistoryUI()}
+function applySnapshot(raw){historyLock=true;const s=JSON.parse(raw);panels=s.panels;panelSettings=s.panelSettings;$("targetWidth").value=s.targetWidth;syncPanelSettingsUI();renderPanel();historyLock=false;updateHistoryUI()}
+function undo(){if(!undoStack.length)return;redoStack.push(snapshot());applySnapshot(undoStack.pop())}
+function redo(){if(!redoStack.length)return;undoStack.push(snapshot());applySnapshot(redoStack.pop())}
+function updateHistoryUI(){$("undoBtn").disabled=!undoStack.length;$("redoBtn").disabled=!redoStack.length;$("historyStatus").textContent=`${undoStack.length} undo step${undoStack.length===1?"":"s"}`}
+
 
 const K="knit",P="purl",CR="cableR",CL="cableL",T="twist";
 const samples=[
@@ -334,11 +354,12 @@ function filteredMotifs(){
 function renderLibrary(){
  familyOptions();const lib=$("library");lib.innerHTML="";
  filteredMotifs().forEach(m=>{
-  const card=document.createElement("div");card.className="motif-card"+(m.id===selectedMotifId?" selected":"");
+  const card=document.createElement("div");card.className="motif-card"+(m.id===selectedMotifId?" selected":"");card.draggable=true;card.dataset.motifId=m.id;
   card.innerHTML=`<button class="fav">${m.favorite?"★":"☆"}</button><div class="motif-name">${m.name}</div>
   <div class="meta">${m.family}<br>${m.width} sts × ${m.height} rows · repeat ${m.repeat.width}×${m.repeat.height}</div>`;
   card.appendChild(motifPreview(m));
   card.onclick=e=>{if(e.target.classList.contains("fav")){m.favorite=!m.favorite;renderLibrary();return}selectedMotifId=m.id;loadMotif(m);renderLibrary()};
+  card.ondragstart=e=>{e.dataTransfer.setData("application/x-gansey-motif",m.id);e.dataTransfer.effectAllowed="copy"};
   lib.appendChild(card);
  });
  if(!lib.children.length)lib.innerHTML='<div class="empty">No motifs match those filters.</div>';
@@ -441,10 +462,15 @@ function syncPanelSettingsUI(){
 function control(label,html){return `<label>${label}${html}</label>`}
 function renderPanel(){
  const panel=panels[activePanel],list=$("panelList");list.innerHTML="";
- if(!panel.length)list.innerHTML='<div class="empty">Add motifs and spacers. Each block can repeat and align vertically.</div>';
+ if(!panel.length)list.innerHTML='<div class="drop-hint">Drag a motif here from the library, or add a spacer.</div>';list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};list.ondrop=e=>{e.preventDefault();list.classList.remove("drag-over");const motifId=e.dataTransfer.getData("application/x-gansey-motif");if(motifId){remember();panel.push(normalizeItem({type:"motif",motifId}));renderPanel()}};
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
-  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");
+  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.draggable=true;block.dataset.index=index;
+  block.ondragstart=e=>{dragIndex=index;block.classList.add("dragging");e.dataTransfer.setData("application/x-gansey-block",String(index));e.dataTransfer.effectAllowed="move"};
+  block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging");document.querySelectorAll(".panel-block").forEach(x=>x.classList.remove("drop-before","drop-after"))};
+  block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault();const r=block.getBoundingClientRect();block.classList.toggle("drop-before",e.clientX<r.left+r.width/2);block.classList.toggle("drop-after",e.clientX>=r.left+r.width/2)};
+  block.ondragleave=()=>block.classList.remove("drop-before","drop-after");
+  block.ondrop=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault();e.stopPropagation();const r=block.getBoundingClientRect(),after=e.clientX>=r.left+r.width/2;remember();const moved=panel.splice(dragIndex,1)[0];let at=index;if(dragIndex<index)at--;if(after)at++;panel.splice(Math.max(0,Math.min(panel.length,at)),0,moved);dragIndex=null;renderPanel()};
   if(item.type==="spacer"){
    block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills panel height</div>`;
    const controls=document.createElement("div");controls.className="block-controls";
@@ -469,16 +495,17 @@ function renderPanel(){
     control("Gap after",`<input data-field="gapAfter" type="number" min="0" value="${item.gapAfter}">`);
    block.appendChild(controls);
    const tools=document.createElement("div");tools.className="panel-toolbar";
-   tools.innerHTML='<button data-a="mirror">Mirror</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
-   tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;
+   tools.innerHTML='<button data-a="mirror">Mirror</button><button data-a="duplicate">Duplicate</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
+   tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;remember();
     if(a==="mirror")item.mirrored=!item.mirrored;
+    if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
     if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
     if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
     renderPanel()
    };block.appendChild(tools);
   }
-  block.querySelector(".remove").onclick=()=>{panel.splice(index,1);renderPanel()};
-  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{
+  block.querySelector(".remove").onclick=()=>{remember();panel.splice(index,1);renderPanel()};
+  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{remember();
     const f=el.dataset.field;
     item[f]=el.tagName==="INPUT"?Number(el.value):el.value;
     renderPanel();
@@ -488,26 +515,29 @@ function renderPanel(){
 }
 $("addSelected").onclick=()=>{
  if(!selectedMotifId)return alert("Select a motif first.");
- panels[activePanel].push(normalizeItem({type:"motif",motifId:selectedMotifId}));
+ remember();panels[activePanel].push(normalizeItem({type:"motif",motifId:selectedMotifId}));
  renderPanel()
 };
 function addSpacer(stitch){
- panels[activePanel].push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch});
+ remember();panels[activePanel].push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch});
  renderPanel();
 }
 $("addKnitSpacer").onclick=()=>addSpacer(K);
 $("addPurlSpacer").onclick=()=>addSpacer(P);
-$("clearPanel").onclick=()=>{panels[activePanel]=[];renderPanel()};
-$("targetWidth").oninput=renderChart;
+$("clearPanel").onclick=()=>{if(!panels[activePanel].length)return;remember();panels[activePanel]=[];renderPanel()};
+$("targetWidth").oninput=renderChart;$("targetWidth").onchange=()=>remember();
 $("panelHeightMode").onchange=()=>{
- panelSettings[activePanel].heightMode=$("panelHeightMode").value;syncPanelSettingsUI();renderPanel()
+ remember();panelSettings[activePanel].heightMode=$("panelHeightMode").value;syncPanelSettingsUI();renderPanel()
 };
-$("panelHeight").oninput=()=>{panelSettings[activePanel].height=Math.max(1,+$("panelHeight").value||1);renderPanel()};
+$("panelHeight").onchange=()=>{remember();panelSettings[activePanel].height=Math.max(1,+$("panelHeight").value||1);renderPanel()};
+
+$("undoBtn").onclick=undo;$("redoBtn").onclick=redo;document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo()}});
 
 function renderChart(){
  const panel=panels[activePanel],total=panel.reduce((s,i)=>s+itemWidth(i),0),target=+$("targetWidth").value,panelH=getPanelHeight();
  $("totalWidth").textContent=`${total} stitches`;$("totalWidth").className="total "+(total===target?"target-ok":"target-bad");
  $("totalHeight").textContent=`${panelH} rows`;
+ const bd=$("widthBreakdown");bd.innerHTML="";panel.forEach((raw,i)=>{const item=normalizeItem(raw),m=item.type==="spacer"?null:motifs.find(x=>x.id===item.motifId),chip=document.createElement("span");chip.className="width-chip";chip.innerHTML=`<strong>${i+1}.</strong> ${item.type==="spacer"?(item.stitch===P?"Purl spacer":"Knit spacer"):(m?.name||"Motif")}: ${itemWidth(item)} sts`;bd.appendChild(chip)});
  const p=$("chartPreview");p.innerHTML="";
  if(!panel.length){p.innerHTML='<div class="empty">The two-dimensional assembled chart will appear here.</div>';return}
  const chunks=panel.map(i=>verticalized(i,panelH));
@@ -527,11 +557,11 @@ $("smartSuggest").onclick=()=>{
  combos.slice(0,4).forEach((combo,i)=>{
    const d=document.createElement("div");d.className="suggestion";
    d.innerHTML=`<strong>Option ${i+1}</strong><br>${combo.filter(x=>x.r).map(x=>`${x.m.name} × ${x.r}`).join(" + ")} <button data-i="${i}" style="float:right">Use</button>`;
-   d.querySelector("button").onclick=()=>{panels[activePanel]=combo.filter(x=>x.r).map(x=>normalizeItem({type:"motif",motifId:x.m.id,hRepeat:x.r}));renderPanel()};s.appendChild(d);
+   d.querySelector("button").onclick=()=>{remember();panels[activePanel]=combo.filter(x=>x.r).map(x=>normalizeItem({type:"motif",motifId:x.m.id,hRepeat:x.r}));renderPanel()};s.appendChild(d);
  });
 };
 
-function project(){return {version:3,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
+function project(){return {version:4,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
 function restore(p){
  motifs=p.motifs||[];
  panels=p.panels||panels;
@@ -539,14 +569,14 @@ function restore(p){
  Object.keys(panels).forEach(k=>panels[k]=panels[k].map(normalizeItem));
  $("targetWidth").value=p.targetWidth||49;activePanel=p.activePanel||"Front";selectedMotifId=null;
  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("active",x.dataset.panel===activePanel));
- syncPanelSettingsUI();familyOptions();renderLibrary();renderPanel()
+ undoStack=[];redoStack=[];syncPanelSettingsUI();familyOptions();renderLibrary();renderPanel();updateHistoryUI()
 }
-$("exportJson").onclick=()=>{const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.3.json";a.click();URL.revokeObjectURL(a.href)};
+$("exportJson").onclick=()=>{const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.4.json";a.click();URL.revokeObjectURL(a.href)};
 $("importJson").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{restore(JSON.parse(r.result))}catch{alert("That JSON file could not be read.")}};r.readAsText(f)};
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV3",JSON.stringify(project()));alert("Project saved in this browser.")};
-$("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyStudioV3")||localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved project found.")};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV4",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved project found.")};
 
-newMotif();selectedMotifId=motifs[0].id;loadMotif(motifs[0]);renderLibrary();syncPanelSettingsUI();renderPanel();
+newMotif();selectedMotifId=motifs[0].id;loadMotif(motifs[0]);renderLibrary();syncPanelSettingsUI();renderPanel();updateHistoryUI();
 </script>
 </body>
 </html>
