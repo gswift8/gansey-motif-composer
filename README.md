@@ -1,46 +1,31 @@
-# Gansey Studio v0.9.0 — Modular Studio
+# Gansey Studio v0.9.1 — Motif Option Control Fix
 
-This release reorganizes the working v0.8.4 application into separate files without
-changing the saved-project structure or the established composer workflow.
+This patch repairs the controls that appear after adding a motif.
 
-## Repository structure
+## Fixed
 
-```text
-gansey-studio/
-├── index.html
-├── motifs.json
-├── README.md
-├── css/
-│   └── styles.css
-└── js/
-    ├── core.js
-    ├── editor.js
-    ├── renderer.js
-    ├── composer.js
-    ├── preview.js
-    ├── io.js
-    └── app.js
-```
+- Horizontal repeats
+- Vertical behavior
+- Vertical repeats
+- Alignment
+- Row offset
+- Unused-row texture
+- Gap before
+- Gap after
 
-## Responsibilities
+The modular v0.9.0 build attached these handlers separately every time a block was
+rendered. v0.9.1 replaces that with one stable handler on the Section Composer,
+using each block's section ID and current block index.
 
-- `core.js` — shared state, section models, history, motif validation, and library loading
-- `editor.js` — motif grid editor and motif-library interface
-- `renderer.js` — stitch matrices, motif tiling, vertical bands, horizontal bands, and dividers
-- `composer.js` — section cards, layout tree, drag/drop, block controls, spacers, and band settings
-- `preview.js` — full-chart preview and smart vertical-band suggestions
-- `io.js` — motif/project import and export plus browser saves
-- `app.js` — application startup
-- `styles.css` — all presentation styles
+Dropdown changes apply immediately. Number fields apply when you leave the field,
+use the stepper arrows, or press Enter.
 
-## GitHub Pages update
+## GitHub update
 
-Upload the entire folder structure. Do not flatten the `css` or `js` folders.
+Replace:
 
-The repository root must contain `index.html` and `motifs.json`, with the CSS and
-JavaScript files in their matching subfolders.
+- `index.html`
+- `js/composer.js`
+- `js/io.js`
 
-## Migration
-
-Browser saves from v0.8.4 and earlier remain loadable. New browser saves use the
-`ganseyStudioV90` key, and project exports use the v0.9.0 filename.
+Uploading the entire v0.9.1 folder is also fine. Keep the `css` and `js` folders intact.
