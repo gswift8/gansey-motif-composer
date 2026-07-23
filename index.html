@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.4.3</title>
+<title>Gansey Studio v0.4.4</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -121,7 +121,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Visual Composer v0.4.3</div>
+  <div class="badge">Visual Composer v0.4.4</div>
 </header>
 
 <main>
@@ -177,7 +177,10 @@ button:hover{transform:translateY(-1px)}
   </div>
 
   <div class="card">
-    <h2>2. Motif library</h2>
+    <div class="row" style="justify-content:space-between;margin-bottom:14px">
+      <h2 style="margin:0">2. Motif library</h2>
+      <button class="primary" id="addSelected">Add selected motif</button>
+    </div>
     <div class="filter-grid">
       <input id="searchBox" type="text" placeholder="Search names or tags">
       <select id="familyFilter"><option value="">All families</option></select>
@@ -195,9 +198,6 @@ button:hover{transform:translateY(-1px)}
   <div class="card">
     <div class="row" style="justify-content:space-between">
       <h2 style="margin:0">3. Two-dimensional panel builder</h2>
-      <div class="row">
-        <button class="primary" id="addSelected">Add selected motif</button>
-      </div>
     </div>
 
     <div class="builder-settings">
@@ -480,12 +480,18 @@ function renderPanel(){
    block.appendChild(controls);
    const spacerTools=document.createElement("div");
    spacerTools.className="panel-toolbar";
-   spacerTools.innerHTML='<button type="button" data-a="left">← Move</button><button type="button" data-a="right">Move →</button>';
+   spacerTools.innerHTML='<button type="button" data-a="duplicate">Duplicate</button><button type="button" data-a="left">← Move</button><button type="button" data-a="right">Move →</button>';
    spacerTools.addEventListener("click",e=>{
     const action=e.target.dataset.a;
     if(!action)return;
     e.preventDefault();
     e.stopPropagation();
+    if(action==="duplicate"){
+      remember();
+      panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
+      renderPanel();
+      return;
+    }
     if(action==="left"&&index>0){
       remember();
       [panel[index-1],panel[index]]=[panel[index],panel[index-1]];
