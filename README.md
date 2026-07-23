@@ -1,16 +1,30 @@
-# Gansey Motif Composer v0.2
+# Gansey Studio v0.8.0 — Bidirectional Band Composer
 
-Open `index.html` in a modern browser.
+## Major changes
 
-## New in v0.2
-- Motif families based on the uploaded gansey motif source
-- Search, family filters, stitch-width filters, tags, and favorites
-- Structured repeat-box coordinates
-- Knit, purl, cable-left, cable-right, and twist symbols
-- Separate Front, Back, Sleeve, Gusset, and Shoulder panels
-- Repeat, mirror, and reorder motif blocks
-- Simple exact-width layout suggestions
-- JSON import/export and browser storage
+- "Field section" is now called **Vertical band**.
+- Vertical and Horizontal bands both accept the same draggable motif and spacer blocks.
+- A Horizontal band's ordered block list forms one repeat unit.
+- That complete unit is tiled across the target stitch width.
+- Both band types support block duplication, reordering, mirroring, gaps, and spacers.
+- A new Layout Tree shows the hierarchy of the active garment panel.
+- Every edit feeds directly into the Full Chart Preview.
 
-## Important
-The bundled motifs are demonstration transcriptions, not a complete digitization of the uploaded source.
+## Horizontal band fitting
+
+- Center whole units
+- Start at left
+- Custom left offset
+- Knit or purl edge filler
+- Mirror every other complete unit
+- Repeat the complete band vertically
+
+## Migration
+
+- Old Field sections become Vertical bands.
+- Old single-motif Horizontal bands become Horizontal bands containing one motif block.
+- v0.7 browser saves and project JSON remain loadable.
+
+## GitHub Pages
+
+Upload `index.html` and `motifs.json` together in the same repository folder.
