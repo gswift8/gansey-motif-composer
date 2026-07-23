@@ -1,13 +1,13 @@
-# Gansey Studio v0.8.2 — Spacer Button Fix
+# Gansey Studio v0.8.3 — Duplicate Button Fix
 
 ## Fixed
 
-- Knit Spacer and Purl Spacer now use one stable event listener on the Section Composer.
-- Buttons are explicitly `type="button"` so they cannot trigger unintended form submission.
-- Each button carries the exact section ID it belongs to.
-- A short confirmation message appears after a spacer is added.
-- Existing v0.8.1 and older saved projects remain loadable.
+- Duplicate, Mirror, Move Left, and Move Right now use one stable delegated click handler.
+- Each draggable block carries its section ID and current block index.
+- Duplicate no longer depends on event handlers created during the last render.
+- Remove also uses the block's current rendered identity.
+- Spacer buttons from v0.8.2 remain fixed.
 
 ## GitHub update
 
-Replace the existing `index.html` with the v0.8.2 file. `motifs.json` is unchanged, but uploading both files together is fine.
+Replace the existing `index.html` with the v0.8.3 file. `motifs.json` is unchanged.
