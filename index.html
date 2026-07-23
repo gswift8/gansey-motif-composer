@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.4.4</title>
+<title>Gansey Studio v0.5.0</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -52,7 +52,7 @@ button:hover{transform:translateY(-1px)}
 .cell[data-stitch="twist"]::after{content:"×"}
 .cell.repeat{box-shadow:inset 0 0 0 2px #e44545}
 .legend{display:flex;gap:12px;color:var(--muted);font-size:.76rem;margin-top:8px;flex-wrap:wrap}
-.filter-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;margin-bottom:12px}
+.filter-grid{display:grid;grid-template-columns:1.35fr .9fr .8fr .8fr;gap:8px;margin-bottom:10px}
 .library{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:11px}
 .motif-card{border:1px solid var(--line);border-radius:16px;padding:11px;background:#fff;cursor:pointer;position:relative}
 .motif-card.selected{outline:3px solid var(--teal)}
@@ -121,7 +121,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Visual Composer v0.4.4</div>
+  <div class="badge">Motif Library v0.5.0</div>
 </header>
 
 <main>
@@ -188,8 +188,17 @@ button:hover{transform:translateY(-1px)}
         <option value="">Any width</option><option value="small">1–8 sts</option>
         <option value="medium">9–16 sts</option><option value="large">17+ sts</option>
       </select>
+      <select id="sortFilter">
+        <option value="name">Sort: A–Z</option>
+        <option value="family">Sort: family</option>
+        <option value="width">Sort: narrowest</option>
+        <option value="favorite">Sort: favorites first</option>
+      </select>
     </div>
-    <label><input type="checkbox" id="favoritesOnly"> Favorites only</label>
+    <div class="row" style="justify-content:space-between">
+      <label><input type="checkbox" id="favoritesOnly"> Favorites only</label>
+      <span id="libraryCount" class="small"></span>
+    </div>
     <div id="library" class="library" style="margin-top:12px"></div>
   </div>
 </section>
@@ -291,18 +300,85 @@ function updateHistoryUI(){$("undoBtn").disabled=!undoStack.length;$("redoBtn").
 
 
 const K="knit",P="purl",CR="cableR",CL="cableL",T="twist";
+function matrixFromStrings(lines){
+ return lines.map(line=>[...line].map(ch=>({".":K,"o":P,"/":CR,"\\":CL,"x":T}[ch]||K)));
+}
+function motif(name,family,tags,lines,favorite=false){
+ const data=matrixFromStrings(lines);
+ return {id:uid(),name,family,tags,favorite,width:data[0].length,height:data.length,
+ repeat:{x:1,y:1,width:data[0].length,height:data.length},data};
+}
 const samples=[
-{id:uid(),name:"Seed Stitch",family:"Background Patterns",tags:["seed","background","2x2"],favorite:true,width:2,height:2,repeat:{x:1,y:1,width:2,height:2},data:[[P,K],[K,P]]},
-{id:uid(),name:"Double Moss",family:"Background Patterns",tags:["moss","background","texture"],favorite:false,width:4,height:4,repeat:{x:1,y:1,width:4,height:4},data:[[P,P,K,K],[P,P,K,K],[K,K,P,P],[K,K,P,P]]},
-{id:uid(),name:"Open Diamond",family:"Diamond Patterns",tags:["diamond","open","geometric"],favorite:true,width:9,height:9,repeat:{x:1,y:1,width:9,height:9},data:[
-[K,K,K,K,P,K,K,K,K],[K,K,K,P,K,P,K,K,K],[K,K,P,K,K,K,P,K,K],[K,P,K,K,K,K,K,P,K],[P,K,K,K,K,K,K,K,P],
-[K,P,K,K,K,K,K,P,K],[K,K,P,K,K,K,P,K,K],[K,K,K,P,K,P,K,K,K],[K,K,K,K,P,K,K,K,K]]},
-{id:uid(),name:"Vertical Herringbone",family:"Diagonal Patterns",tags:["herringbone","vertical","zigzag"],favorite:false,width:10,height:8,repeat:{x:1,y:1,width:10,height:8},data:[
-[P,K,K,K,K,K,K,K,K,P],[K,P,K,K,K,K,K,K,P,K],[K,K,P,K,K,K,K,P,K,K],[K,K,K,P,K,K,P,K,K,K],
-[K,K,K,K,P,P,K,K,K,K],[K,K,K,P,K,K,P,K,K,K],[K,K,P,K,K,K,K,P,K,K],[K,P,K,K,K,K,K,K,P,K]]},
-{id:uid(),name:"Cable Ladder",family:"Vertical Motifs with Cables",tags:["cable","ladder","vertical"],favorite:false,width:8,height:8,repeat:{x:1,y:1,width:8,height:8},data:[
-[P,P,K,K,K,K,P,P],[P,P,CR,CR,CL,CL,P,P],[P,P,K,K,K,K,P,P],[P,P,K,K,K,K,P,P],
-[P,P,CR,CR,CL,CL,P,P],[P,P,K,K,K,K,P,P],[P,P,K,K,K,K,P,P],[P,P,K,K,K,K,P,P]]}
+ motif("Seed Stitch","Background Patterns",["seed","background","texture","2x2"],["o.",".o"],true),
+ motif("Double Moss","Background Patterns",["moss","background","texture"],["oo..","oo..","..oo","..oo"]),
+ motif("Little Checks","Background Patterns",["check","background","geometric"],["o.o.",".o.o","o.o.",".o.o"]),
+ motif("Basketweave","Background Patterns",["basket","background","block"],["ooo...","ooo...","ooo...","...ooo","...ooo","...ooo"]),
+ motif("Broken Rib","Background Patterns",["rib","background","vertical"],["o.o.",".o.o"]),
+ motif("Diagonal Stripe","Diagonal Patterns",["diagonal","stripe","simple"],["o....",".o...","..o..","...o.","....o"]),
+ motif("Vertical Herringbone","Diagonal Patterns",["herringbone","vertical","zigzag"],[
+  "o........o",".o......o.","..o....o..","...o..o...","....oo....","...o..o...","..o....o..",".o......o."
+ ]),
+ motif("Chevron","Diagonal Patterns",["chevron","zigzag","arrow"],["o.......o",".o.....o.","..o...o..","...o.o...","....o....","...o.o...","..o...o..",".o.....o."]),
+ motif("Open Diamond","Diamond Patterns",["diamond","open","geometric"],[
+  "....o....","...o.o...","..o...o..",".o.....o.","o.......o",".o.....o.","..o...o..","...o.o...","....o...."
+ ],true),
+ motif("Filled Diamond","Diamond Patterns",["diamond","filled","geometric"],[
+  "....o....","...ooo...","..ooooo..",".ooooooo.","ooooooooo",".ooooooo.","..ooooo..","...ooo...","....o...."
+ ]),
+ motif("Double Diamond","Diamond Patterns",["diamond","double","centerpiece"],[
+  "....o....","...o.o...","..o.o.o..",".o.o.o.o.","o.o...o.o",".o.o.o.o.","..o.o.o..","...o.o...","....o...."
+ ]),
+ motif("Diamond Lattice","Diamond Patterns",["diamond","lattice","allover"],[
+  "o...o...o",".o.o.o.o.","..o...o..",".o.o.o.o.","o...o...o",".o.o.o.o.","..o...o..",".o.o.o.o.","o...o...o"
+ ]),
+ motif("Anchor","Picture Motifs",["anchor","nautical","picture"],[
+  "....o....","...ooo...","....o....","....o....","..ooooo..",".o..o..o.","o...o...o",".oo.o.oo.","..ooooo.."
+ ],true),
+ motif("Tree","Picture Motifs",["tree","life","picture"],[
+  "....o....","...ooo...","..ooooo..",".ooooooo.","...ooo...","..ooooo..","....o....","...ooo...","..ooooo.."
+ ]),
+ motif("Wave Crest","Picture Motifs",["wave","sea","nautical"],[
+  "......o..","....oo.o.","...o....o","..o......",".o.......","o........",".o.......","..o......"
+ ]),
+ motif("Ladder","Vertical Motifs",["ladder","vertical","column"],[
+  "o....o","oooooo","o....o","o....o","oooooo","o....o","o....o","oooooo"
+ ]),
+ motif("Twin Columns","Vertical Motifs",["column","vertical","pair"],[
+  "oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo"
+ ]),
+ motif("Marriage Lines","Vertical Motifs",["marriage","lines","vertical"],[
+  "o..o..o","o..o..o",".oo.oo.",".oo.oo.","o..o..o","o..o..o",".oo.oo.",".oo.oo."
+ ]),
+ motif("Cable Ladder","Vertical Motifs with Cables",["cable","ladder","vertical"],[
+  "oo....oo","oo//\\\\oo","oo....oo","oo....oo","oo//\\\\oo","oo....oo","oo....oo","oo....oo"
+ ]),
+ motif("Rope Cable","Vertical Motifs with Cables",["rope","cable","vertical"],[
+  "oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo"
+ ],true),
+ motif("Twin Rope Cable","Vertical Motifs with Cables",["rope","cable","twin"],[
+  "o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o"
+ ]),
+ motif("Cable and Purl Ribs","Vertical Motifs with Cables",["cable","rib","texture"],[
+  "oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo"
+ ]),
+ motif("Wave Band","Horizontal Motifs",["wave","horizontal","border"],[
+  "..o....o..",".o.o..o.o.","o...oo...o",".o......o.","..o....o.."
+ ]),
+ motif("Zigzag Band","Horizontal Motifs",["zigzag","horizontal","border"],[
+  "o.......o",".o.....o.","..o...o..","...o.o...","....o...."
+ ]),
+ motif("Harbor Bars","Horizontal Motifs",["bars","horizontal","simple"],[
+  "oooooooooo","..........","oo..oo..oo","..........","oooooooooo"
+ ]),
+ motif("Chain Band","Horizontal Motifs",["chain","horizontal","linked"],[
+  ".ooo...ooo","o...o.o...","o...o.o...o",".ooo...ooo"
+ ]),
+ motif("Small Cross","Other",["cross","small","filler"],[
+  "..o..","..o..","ooooo","..o..","..o.."
+ ]),
+ motif("Eight-Point Star","Other",["star","centerpiece","geometric"],[
+  "....o....","o...o...o",".o..o..o.","..o.o.o..","ooooooooo","..o.o.o..",".o..o..o.","o...o...o","....o...."
+ ])
 ];
 let motifs=JSON.parse(JSON.stringify(samples));
 
@@ -345,16 +421,24 @@ function familyOptions(){
  sel.innerHTML='<option value="">All families</option>'+fams.map(f=>`<option>${f}</option>`).join("");sel.value=old;
 }
 function filteredMotifs(){
- const q=$("searchBox").value.toLowerCase(),fam=$("familyFilter").value,wf=$("widthFilter").value,fav=$("favoritesOnly").checked;
- return motifs.filter(m=>{
+ const q=$("searchBox").value.toLowerCase(),fam=$("familyFilter").value,wf=$("widthFilter").value,fav=$("favoritesOnly").checked,sort=$("sortFilter").value;
+ const result=motifs.filter(m=>{
    const text=(m.name+" "+m.family+" "+m.tags.join(" ")).toLowerCase();
    const widthOk=!wf||(wf==="small"&&m.width<=8)||(wf==="medium"&&m.width>=9&&m.width<=16)||(wf==="large"&&m.width>=17);
    return (!q||text.includes(q))&&(!fam||m.family===fam)&&widthOk&&(!fav||m.favorite);
  });
+ result.sort((a,b)=>{
+   if(sort==="family")return a.family.localeCompare(b.family)||a.name.localeCompare(b.name);
+   if(sort==="width")return a.width-b.width||a.name.localeCompare(b.name);
+   if(sort==="favorite")return Number(b.favorite)-Number(a.favorite)||a.name.localeCompare(b.name);
+   return a.name.localeCompare(b.name);
+ });
+ return result;
 }
 function renderLibrary(){
- familyOptions();const lib=$("library");lib.innerHTML="";
- filteredMotifs().forEach(m=>{
+ familyOptions();const lib=$("library");lib.innerHTML="",visible=filteredMotifs();
+ $("libraryCount").textContent=`${visible.length} of ${motifs.length} motifs`;
+ visible.forEach(m=>{
   const card=document.createElement("div");card.className="motif-card"+(m.id===selectedMotifId?" selected":"");card.draggable=true;card.dataset.motifId=m.id;
   card.innerHTML=`<button class="fav">${m.favorite?"★":"☆"}</button><div class="motif-name">${m.name}</div>
   <div class="meta">${m.family}<br>${m.width} sts × ${m.height} rows · repeat ${m.repeat.width}×${m.repeat.height}</div>`;
@@ -365,7 +449,7 @@ function renderLibrary(){
  });
  if(!lib.children.length)lib.innerHTML='<div class="empty">No motifs match those filters.</div>';
 }
-["searchBox","familyFilter","widthFilter","favoritesOnly"].forEach(id=>$(id).oninput=renderLibrary);
+["searchBox","familyFilter","widthFilter","sortFilter","favoritesOnly"].forEach(id=>$(id).oninput=renderLibrary);
 
 function loadMotif(m){
  $("motifName").value=m.name;$("motifWidth").value=m.width;$("motifHeight").value=m.height;$("motifFamily").value=m.family;
