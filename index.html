@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.8.1</title>
+<title>Gansey Studio v0.8.2</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -157,7 +157,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels from draggable vertical bands, horizontal bands, and row dividers.</div>
   </div>
-  <div class="badge">Bidirectional Band Composer v0.8.1</div>
+  <div class="badge">Bidirectional Band Composer v0.8.2</div>
 </header>
 
 <main>
@@ -290,7 +290,7 @@ button:hover{transform:translateY(-1px)}
       <div id="layoutTree" class="layout-tree"></div>
     </div>
 
-    <div id="sectionStack" class="section-stack"></div>
+    <div id="composerStatus" class="small" style="margin:8px 0"></div><div id="sectionStack" class="section-stack"></div>
 
     <div class="row" style="justify-content:space-between;margin-top:12px">
       <div class="canvas-info">
@@ -563,7 +563,7 @@ $("deleteMotif").onclick=()=>{
 
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
- activePanel=b.dataset.panel;selectedSectionId=null;ensureSections();renderPanel();
+ activePanel=b.dataset.panel;selectedSectionId=null;$("composerStatus").textContent="";ensureSections();renderPanel();
 });
 
 function repeatSlice(m){
@@ -771,6 +771,26 @@ function renderLayoutTree(){
  if(!tree.children.length)tree.innerHTML='<div class="small">No sections yet.</div>';
 }
 
+
+$("sectionStack").addEventListener("click",e=>{
+ const button=e.target.closest("button[data-add-spacer]");
+ if(!button)return;
+ e.preventDefault();
+ e.stopPropagation();
+ const sectionId=button.dataset.sectionId;
+ const section=panels[activePanel].find(s=>s.id===sectionId);
+ if(!section||!Array.isArray(section.items))return;
+ remember();
+ section.items.push({
+  type:"spacer",
+  width:Math.max(1,Number($("spacerWidth").value)||1),
+  stitch:button.dataset.addSpacer==="purl"?P:K
+ });
+ selectedSectionId=section.id;
+ $("composerStatus").textContent=`Added ${button.dataset.addSpacer==="purl"?"purl":"knit"} spacer (${Math.max(1,Number($("spacerWidth").value)||1)} sts).`;
+ renderPanel();
+});
+
 function renderPanel(){
  ensureSections();
  const sections=panels[activePanel],stack=$("sectionStack");stack.innerHTML="";
@@ -809,15 +829,7 @@ function renderPanel(){
     control("Current width",`<input value="${section.items.reduce((s,i)=>s+itemWidth(i),0)} / ${target} sts" disabled>`);
    card.appendChild(settings);
    const actions=document.createElement("div");actions.className="builder-actions";
-   actions.innerHTML='<button class="ghost" data-add="knit">+ Knit spacer</button><button class="ghost" data-add="purl">+ Purl spacer</button><span class="small">Blocks extend vertically according to their own repeat and alignment settings.</span>';
-   actions.querySelectorAll("button[data-add]").forEach(button=>{
-    button.onclick=e=>{
-     e.preventDefault();e.stopPropagation();
-     const a=button.dataset.add;remember();
-     section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});
-     renderPanel();
-    };
-   });
+   actions.innerHTML=`<button type="button" class="ghost" data-add-spacer="knit" data-section-id="${section.id}">+ Knit spacer</button><button type="button" class="ghost" data-add-spacer="purl" data-section-id="${section.id}">+ Purl spacer</button><span class="small">Blocks extend vertically according to their own repeat and alignment settings.</span>`;
    card.appendChild(actions);
    renderBandItems(section,card);
   }else if(section.type==="band"){
@@ -833,15 +845,7 @@ function renderPanel(){
     control("Unit width",`<input value="${unitW} sts" disabled>`);
    card.appendChild(settings);
    const actions=document.createElement("div");actions.className="builder-actions";
-   actions.innerHTML='<button class="ghost" data-add="knit">+ Knit spacer</button><button class="ghost" data-add="purl">+ Purl spacer</button><span class="small">These blocks form one unit; the complete unit repeats across the panel.</span>';
-   actions.querySelectorAll("button[data-add]").forEach(button=>{
-    button.onclick=e=>{
-     e.preventDefault();e.stopPropagation();
-     const a=button.dataset.add;remember();
-     section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});
-     renderPanel();
-    };
-   });
+   actions.innerHTML=`<button type="button" class="ghost" data-add-spacer="knit" data-section-id="${section.id}">+ Knit spacer</button><button type="button" class="ghost" data-add-spacer="purl" data-section-id="${section.id}">+ Purl spacer</button><span class="small">These blocks form one unit; the complete unit repeats across the panel.</span>`;
    card.appendChild(actions);
    renderBandItems(section,card);
    const leftover=unitW?target%unitW:target;
@@ -958,7 +962,7 @@ $("reloadLibrary").onclick=()=>{
  if(confirm("Reset the current motif library to the hosted motifs.json file? Any unsaved imported or edited library changes will be discarded."))loadExternalLibrary(true);
 };
 
-function project(){return {version:8.1,motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId}}
+function project(){return {version:8.2,motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId}}
 function restore(p){
  motifs=p.motifs||motifs;
  panels=p.panels||panels;
@@ -972,16 +976,16 @@ function restore(p){
 }
 $("exportJson").onclick=()=>{
  const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.8.1.json";a.click();URL.revokeObjectURL(a.href)
+ a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.8.2.json";a.click();URL.revokeObjectURL(a.href)
 };
 $("importJson").onchange=e=>{
  const f=e.target.files[0];if(!f)return;const r=new FileReader();
  r.onload=()=>{try{restore(JSON.parse(r.result))}catch(error){alert("That JSON file could not be read.")}};
  r.readAsText(f)
 };
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV81",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV82",JSON.stringify(project()));alert("Project saved in this browser.")};
 $("loadLocal").onclick=()=>{
- const raw=localStorage.getItem("ganseyStudioV81")||localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
+ const raw=localStorage.getItem("ganseyStudioV82")||localStorage.getItem("ganseyStudioV81")||localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
  raw?restore(JSON.parse(raw)):alert("No saved project found.")
 };
 

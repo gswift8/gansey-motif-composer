@@ -1,23 +1,13 @@
-# Gansey Studio v0.8.1 — Interaction Fix
-
-This patch fixes controls inside draggable motif and spacer cards.
+# Gansey Studio v0.8.2 — Spacer Button Fix
 
 ## Fixed
 
-- Duplicate motif and spacer buttons
-- Knit spacer and Purl spacer buttons in both band types
-- Section Duplicate, Move, Select, and Delete buttons
-- Remove buttons inside draggable blocks
-- Dragging no longer intercepts clicks on buttons, inputs, selects, or labels
+- Knit Spacer and Purl Spacer now use one stable event listener on the Section Composer.
+- Buttons are explicitly `type="button"` so they cannot trigger unintended form submission.
+- Each button carries the exact section ID it belongs to.
+- A short confirmation message appears after a spacer is added.
+- Existing v0.8.1 and older saved projects remain loadable.
 
-## Motif library reset
+## GitHub update
 
-The former `Reload motifs.json` button is now labeled:
-
-`Reset to hosted motif library`
-
-It is intentional. It reloads the default `motifs.json` hosted beside `index.html` and discards unsaved in-memory library edits or imports. The app now asks for confirmation first.
-
-## GitHub Pages
-
-Upload `index.html` and `motifs.json` together in the same repository folder.
+Replace the existing `index.html` with the v0.8.2 file. `motifs.json` is unchanged, but uploading both files together is fine.
