@@ -1,13 +1,20 @@
-# Gansey Studio v0.8.3 — Duplicate Button Fix
+# Gansey Studio v0.8.4 — Block Control Fix
+
+The block controls in v0.8.3 were searching for a parent element named `.block-card`,
+but the actual rendered motif/spacer element is `.panel-block`. Because that lookup
+failed, Duplicate, Mirror, Move Left, Move Right, and Remove could not identify the
+selected block.
 
 ## Fixed
 
-- Duplicate, Mirror, Move Left, and Move Right now use one stable delegated click handler.
-- Each draggable block carries its section ID and current block index.
-- Duplicate no longer depends on event handlers created during the last render.
-- Remove also uses the block's current rendered identity.
-- Spacer buttons from v0.8.2 remain fixed.
+- Duplicate
+- Mirror
+- Move left
+- Move right
+- Remove
+- Explicit `type="button"` added to block toolbar buttons
+- Each rendered block now stores its section ID and current block index
 
 ## GitHub update
 
-Replace the existing `index.html` with the v0.8.3 file. `motifs.json` is unchanged.
+Replace the existing `index.html` with the v0.8.4 file. `motifs.json` is unchanged.
