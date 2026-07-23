@@ -1,90 +1,29 @@
 function control(label,html){return `<label>${label}${html}</label>`}
 
-let activeBlockDrag=null;
-
-function clearBlockDropIndicators(){
- document.querySelectorAll(".panel-block.drop-before,.panel-block.drop-after").forEach(el=>{
-  el.classList.remove("drop-before","drop-after");
- });
- document.querySelectorAll(".panel-list.drag-over").forEach(el=>el.classList.remove("drag-over"));
-}
-
-function beginBlockDrag(e,section,index,block){
- if(e.target.closest("button:not(.drag-handle),input,select,label")){e.preventDefault();return}
- activeBlockDrag={sectionId:section.id,index};
- block.classList.add("dragging");
- e.dataTransfer.effectAllowed="move";
- e.dataTransfer.setData("application/x-gansey-block",JSON.stringify(activeBlockDrag));
- e.dataTransfer.setData("text/plain","gansey-block");
-}
-
-function moveDraggedBlock(targetSection,targetIndex){
- if(!activeBlockDrag)return false;
- const sourceSection=panels[activePanel].find(s=>s.id===activeBlockDrag.sectionId);
- if(!sourceSection||!Array.isArray(sourceSection.items)||!Array.isArray(targetSection.items))return false;
-
- const sourceIndex=activeBlockDrag.index;
- if(!sourceSection.items[sourceIndex])return false;
-
- // Removing from the same section shifts later insertion indexes left by one.
- let insertionIndex=targetIndex;
- if(sourceSection.id===targetSection.id&&sourceIndex<insertionIndex)insertionIndex--;
-
- if(sourceSection.id===targetSection.id&&sourceIndex===insertionIndex)return false;
-
- remember();
- const [moved]=sourceSection.items.splice(sourceIndex,1);
- targetSection.items.splice(Math.max(0,Math.min(insertionIndex,targetSection.items.length)),0,moved);
- selectedSectionId=targetSection.id;
- $("composerStatus").textContent=sourceSection.id===targetSection.id?"Reordered block.":"Moved block to another band.";
- activeBlockDrag=null;
- clearBlockDropIndicators();
- renderPanel();
- return true;
-}
-
 function renderBandItems(section,host){
  const panel=section.items;
  const list=document.createElement("div");list.className="panel-list";
- list.dataset.sectionId=section.id;
- if(!panel.length)list.innerHTML='<div class="drop-hint">Drag motifs here, use “Add selected motif,” or add a spacer. Reorder blocks with the ⠿ handle.</div>';
-
- list.ondragover=e=>{
-  const isBlock=e.dataTransfer.types.includes("application/x-gansey-block");
-  const isMotif=e.dataTransfer.types.includes("application/x-gansey-motif");
-  if(!isBlock&&!isMotif)return;
-  e.preventDefault();
-  list.classList.add("drag-over");
-  e.dataTransfer.dropEffect=isBlock?"move":"copy";
- };
+ if(!panel.length)list.innerHTML='<div class="drop-hint">Drag motifs here, use “Add selected motif,” or add a spacer. Reorder blocks by dragging.</div>';
+ list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};
  list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};
  list.ondrop=e=>{
-  e.preventDefault();
-  e.stopPropagation();
-  list.classList.remove("drag-over");
-
-  if(activeBlockDrag){
-   moveDraggedBlock(section,panel.length);
-   return;
-  }
-
+  e.preventDefault();list.classList.remove("drag-over");
   const motifId=e.dataTransfer.getData("application/x-gansey-motif");
-  if(motifId){
-   remember();
-   panel.push(normalizeItem({type:"motif",motifId}));
-   selectedSectionId=section.id;
-   $("composerStatus").textContent="Added motif.";
-   renderPanel();
-  }
+  if(motifId){remember();panel.push(normalizeItem({type:"motif",motifId}));renderPanel()}
  };
-
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
-  const block=document.createElement("div");
-  block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");
-  block.dataset.sectionId=section.id;
-  block.dataset.blockIndex=String(index);
-
+  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.dataset.sectionId=section.id;block.dataset.blockIndex=String(index);block.draggable=true;
+  block.ondragstart=e=>{
+   if(e.target.closest("button,input,select,label")){e.preventDefault();return}
+   dragIndex=index;block.classList.add("dragging");e.dataTransfer.effectAllowed="move"
+  };
+  block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging")};
+  block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault()};
+  block.ondrop=e=>{
+   if(dragIndex===null||dragIndex===index)return;e.preventDefault();e.stopPropagation();remember();
+   const moved=panel.splice(dragIndex,1)[0];panel.splice(index,0,moved);dragIndex=null;renderPanel()
+  };
   if(item.type==="spacer"){
    block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills section height</div>`;
    const controls=document.createElement("div");controls.className="block-controls";
@@ -104,76 +43,26 @@ function renderBandItems(section,host){
     control("Vertical repeats",`<input data-field="vRepeat" type="number" min="1" value="${item.vRepeat}" ${item.vMode==="fill"?"disabled":""}>`)+
     control("Alignment",`<select data-field="align"><option value="top"${item.align==="top"?" selected":""}>Top</option><option value="center"${item.align==="center"?" selected":""}>Center</option><option value="bottom"${item.align==="bottom"?" selected":""}>Bottom</option></select>`)+
     control("Row offset",`<input data-field="rowOffset" type="number" value="${item.rowOffset}">`)+
+    control("Stitch offset",`<input data-field="stitchOffset" type="number" value="${item.stitchOffset}">`)+
     control("Unused rows",`<select data-field="fillStitch"><option value="knit"${item.fillStitch===K?" selected":""}>Knit</option><option value="purl"${item.fillStitch===P?" selected":""}>Purl</option></select>`)+
     control("Gap before",`<input data-field="gapBefore" type="number" min="0" value="${item.gapBefore}">`)+
     control("Gap after",`<input data-field="gapAfter" type="number" min="0" value="${item.gapAfter}">`);
    block.appendChild(controls);
   }
-
-  const dragHandle=document.createElement("button");
-  dragHandle.type="button";
-  dragHandle.className="drag-handle";
-  dragHandle.draggable=true;
-  dragHandle.title="Drag to reorder";
-  dragHandle.setAttribute("aria-label","Drag to reorder this block");
-  dragHandle.textContent="⠿ Drag";
-  dragHandle.ondragstart=e=>beginBlockDrag(e,section,index,block);
-  dragHandle.ondragend=()=>{
-   activeBlockDrag=null;
-   block.classList.remove("dragging");
-   clearBlockDropIndicators();
-  };
-  block.prepend(dragHandle);
-
-  // The non-interactive parts of the card can also initiate a drag.
-  block.draggable=true;
-  block.ondragstart=e=>{
-   if(e.target===dragHandle)return;
-   beginBlockDrag(e,section,index,block);
-  };
-  block.ondragend=()=>{
-   activeBlockDrag=null;
-   block.classList.remove("dragging");
-   clearBlockDropIndicators();
-  };
-
-  block.ondragover=e=>{
-   if(!activeBlockDrag)return;
-   e.preventDefault();
-   e.stopPropagation();
-   clearBlockDropIndicators();
-   const rect=block.getBoundingClientRect();
-   const after=e.clientX>rect.left+rect.width/2;
-   block.classList.add(after?"drop-after":"drop-before");
-   e.dataTransfer.dropEffect="move";
-  };
-  block.ondragleave=e=>{
-   if(!block.contains(e.relatedTarget))block.classList.remove("drop-before","drop-after");
-  };
-  block.ondrop=e=>{
-   if(!activeBlockDrag)return;
-   e.preventDefault();
-   e.stopPropagation();
-   const rect=block.getBoundingClientRect();
-   const after=e.clientX>rect.left+rect.width/2;
-   moveDraggedBlock(section,index+(after?1:0));
-  };
-
   const tools=document.createElement("div");tools.className="panel-toolbar";
   tools.innerHTML=(item.type==="motif"?'<button type="button" data-block-action="mirror">Mirror</button>':'')+'<button type="button" data-block-action="duplicate">Duplicate</button><button type="button" data-block-action="left">← Move</button><button type="button" data-block-action="right">Move →</button>';
-  block.appendChild(tools);
 
+  block.appendChild(tools);
   block.querySelector(".remove").onclick=e=>{
    e.preventDefault();e.stopPropagation();
    const card=e.target.closest(".panel-block");
-   const currentSection=panels[activePanel].find(s=>s.id===card?.dataset.sectionId);
+   const section=panels[activePanel].find(s=>s.id===card?.dataset.sectionId);
    const blockIndex=Number(card?.dataset.blockIndex);
-   if(!currentSection||!Array.isArray(currentSection.items)||!currentSection.items[blockIndex])return;
-   remember();currentSection.items.splice(blockIndex,1);selectedSectionId=currentSection.id;renderPanel();
+   if(!section||!Array.isArray(section.items)||!section.items[blockIndex])return;
+   remember();section.items.splice(blockIndex,1);selectedSectionId=section.id;renderPanel();
   };
   list.appendChild(block);
  });
-
  host.appendChild(list);
  const breakdown=document.createElement("div");breakdown.className="width-breakdown";
  panel.forEach((raw,i)=>{

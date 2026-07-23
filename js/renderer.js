@@ -6,7 +6,7 @@ function normalizeItem(item){
  if(item.type==="spacer")return Object.assign({width:2,stitch:K},item);
  return Object.assign({
    type:"motif",hRepeat:1,vRepeat:1,vMode:"count",align:"center",
-   rowOffset:0,gapBefore:0,gapAfter:0,fillStitch:K,mirrored:false
+   rowOffset:0,stitchOffset:0,gapBefore:0,gapAfter:0,fillStitch:K,mirrored:false
  },item,{hRepeat:item.hRepeat||item.repeat||1});
 }
 function motifTile(item){
@@ -50,7 +50,17 @@ function verticalized(raw,panelH){
    return Array(w).fill(item.fillStitch);
  });
  const before=Math.max(0,+item.gapBefore||0),after=Math.max(0,+item.gapAfter||0);
- return rows.map(r=>[...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)]);
+ const stitchOffset=Number(item.stitchOffset||0);
+ return rows.map(r=>{
+  let full=[...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)];
+  if(stitchOffset>0){
+   full=[...Array(stitchOffset).fill(item.fillStitch),...full].slice(0,full.length);
+  }else if(stitchOffset<0){
+   const amount=Math.min(full.length,Math.abs(stitchOffset));
+   full=[...full.slice(amount),...Array(amount).fill(item.fillStitch)];
+  }
+  return full;
+ });
 }
 function itemWidth(raw){
  const i=normalizeItem(raw);

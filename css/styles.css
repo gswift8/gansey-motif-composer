@@ -141,22 +141,3 @@ button:hover{transform:translateY(-1px)}
 .tree-block{margin-left:20px;background:#fafaff;font-size:.76rem}
 .tree-icon{width:20px;text-align:center}
 .horizontal-unit-summary{font-size:.74rem;color:var(--muted);margin:7px 0}
-
-.drag-handle{
- display:block;
- width:max-content;
- margin:-3px 32px 8px 0;
- padding:4px 8px;
- border:1px dashed var(--line);
- border-radius:9px;
- background:var(--paper);
- color:var(--muted);
- font-size:.74rem;
- font-weight:800;
- cursor:grab;
- touch-action:none;
-}
-.drag-handle:hover{border-color:var(--teal);color:var(--ink)}
-.drag-handle:active{cursor:grabbing}
-.panel-block.drop-before{box-shadow:-7px 0 0 var(--teal)}
-.panel-block.drop-after{box-shadow:7px 0 0 var(--teal)}
