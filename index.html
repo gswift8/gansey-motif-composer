@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.6.0</title>
+<title>Gansey Studio v0.7.0</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -113,15 +113,41 @@ button:hover{transform:translateY(-1px)}
 .undo-status{font-size:.72rem;color:var(--muted);margin-left:auto}
 @media(max-width:700px){.builder-settings{grid-template-columns:1fr 1fr}.block-controls{grid-template-columns:1fr}}
 @media(max-width:950px){main{grid-template-columns:1fr;padding:14px}.filter-grid{grid-template-columns:1fr}.editor-top{grid-template-columns:1fr 74px 74px}header{padding:22px 16px 8px}}
+
+.section-stack{display:grid;gap:13px;margin-top:12px}
+.section-card{border:1px solid var(--line);border-radius:18px;background:#fbfbff;padding:12px;position:relative}
+.section-card.active-section{outline:3px solid var(--teal)}
+.section-head{display:flex;gap:9px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:9px}
+.section-head h3{margin:0;font-size:1rem}
+.section-badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#eae8ff;font-size:.66rem;font-weight:950;margin-bottom:4px}
+.section-tools{display:flex;gap:6px;flex-wrap:wrap}
+.section-tools button{padding:6px 8px;font-size:.72rem}
+.section-settings{display:grid;grid-template-columns:repeat(4,minmax(110px,1fr));gap:8px;margin:9px 0}
+.section-settings label{display:grid;gap:4px}
+.section-settings input,.section-settings select{width:100%}
+.section-summary{font-size:.75rem;color:var(--muted)}
+.section-card .panel-list{min-height:128px;margin-top:8px}
+.band-preview{overflow:auto;border:1px dashed var(--line);border-radius:12px;padding:9px;background:white}
+.band-grid{display:grid;gap:1px;width:max-content}
+.band-cell{width:12px;height:12px;border:1px solid #e2dfed;background:white}
+.band-cell.purl{background:var(--ink)}
+.band-cell.cableR,.band-cell.cableL{background:linear-gradient(135deg,#fff 42%,var(--ink) 43%,var(--ink) 57%,#fff 58%)}
+.band-cell.twist{background:#dcd7ff}
+.section-adders{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.section-warning{padding:8px 10px;border-radius:11px;background:#fff7e4;border:1px solid #f5d994;font-size:.74rem;color:#765d1e}
+.chart-section-label{font-size:.72rem;color:var(--muted);margin:10px 0 4px;font-weight:850}
+.chart-section-divider{height:2px;background:linear-gradient(90deg,var(--teal),var(--peri));margin:8px 0}
+@media(max-width:700px){.section-settings{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
 <header>
   <div>
     <h1>Gansey Studio</h1>
-    <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
+    <div class="subtitle">Build gansey panels as vertical stacks of fields, horizontal bands, and row dividers.</div>
   </div>
-  <div class="badge">Data-Driven Library v0.6.0</div>
+  <div class="badge">Section Composer v0.7.0</div>
 </header>
 
 <main>
@@ -214,33 +240,17 @@ button:hover{transform:translateY(-1px)}
 <section class="stack">
   <div class="card">
     <div class="row" style="justify-content:space-between">
-      <h2 style="margin:0">3. Two-dimensional panel builder</h2>
+      <h2 style="margin:0">3. Section composer</h2>
+      <span class="small">Top of garment panel is shown first.</span>
     </div>
 
     <div class="builder-settings">
       <label>Target stitches
         <input id="targetWidth" type="number" min="1" value="49">
       </label>
-      <label>Panel height
-        <select id="panelHeightMode">
-          <option value="auto">Auto: tallest block</option>
-          <option value="fixed">Fixed row count</option>
-        </select>
-      </label>
-      <label>Fixed rows
-        <input id="panelHeight" type="number" min="1" value="18">
-      </label>
-      <label>Spacer width
+      <label>Default spacer width
         <input id="spacerWidth" type="number" min="1" value="2">
       </label>
-    </div>
-    <div class="builder-actions">
-      <button class="ghost" id="addKnitSpacer">+ Knit spacer</button>
-      <button class="ghost" id="addPurlSpacer">+ Purl spacer</button>
-      <button class="ghost" id="undoBtn">↶ Undo</button>
-      <button class="ghost" id="redoBtn">↷ Redo</button>
-      <span class="small">Drag motifs from the library into the panel, then drag blocks to reorder.</span>
-      <span class="undo-status" id="historyStatus"></span>
     </div>
 
     <div class="tabs">
@@ -251,19 +261,29 @@ button:hover{transform:translateY(-1px)}
       <button data-panel="Shoulder">Shoulder</button>
     </div>
 
-    <div id="panelList" class="panel-list"></div>
-    <div id="widthBreakdown" class="width-breakdown" aria-label="Panel stitch breakdown"></div>
-    <div class="row" style="justify-content:space-between">
+    <div class="section-adders">
+      <button class="primary" id="addFieldSection">+ Field section</button>
+      <button class="ghost" id="addBandSection">+ Horizontal band</button>
+      <button class="ghost" id="addDividerSection">+ Row divider</button>
+      <button class="ghost" id="undoBtn">↶ Undo</button>
+      <button class="ghost" id="redoBtn">↷ Redo</button>
+      <span class="undo-status" id="historyStatus"></span>
+    </div>
+
+    <div class="small">Select a section before adding motifs or spacers. Field sections arrange blocks left-to-right. Horizontal bands repeat one motif across the full target width.</div>
+    <div id="sectionStack" class="section-stack"></div>
+
+    <div class="row" style="justify-content:space-between;margin-top:12px">
       <div class="canvas-info">
-        <div><div class="small">Current panel width</div><div id="totalWidth" class="total">0 stitches</div></div>
-        <div><div class="small">Preview height</div><strong id="totalHeight">0 rows</strong></div>
+        <div><div class="small">Target width</div><div id="totalWidth" class="total">49 stitches</div></div>
+        <div><div class="small">Total panel height</div><strong id="totalHeight">0 rows</strong></div>
       </div>
-      <button class="danger" id="clearPanel">Clear panel</button>
+      <button class="danger" id="clearPanel">Clear all sections</button>
     </div>
 
     <div class="smart-box">
-      <input id="smartQuery" type="text" placeholder="Example: fill 49 stitches with a centered diamond">
-      <button id="smartSuggest">Suggest layout</button>
+      <input id="smartQuery" type="text" placeholder="Example: fill the selected field with diamonds and cables">
+      <button id="smartSuggest">Suggest field layout</button>
     </div>
     <div id="suggestions"></div>
   </div>
@@ -291,21 +311,60 @@ button:hover{transform:translateY(-1px)}
 <script>
 const $=id=>document.getElementById(id);
 const uid=()=>crypto.randomUUID();
-let activeStitch="knit", editorData=[], selectedMotifId=null, activePanel="Front";
+let activeStitch="knit", editorData=[], selectedMotifId=null, activePanel="Front", selectedSectionId=null;
 let panels={Front:[],Back:[],Sleeve:[],Gusset:[],Shoulder:[]};
-let panelSettings={
- Front:{heightMode:"auto",height:18},Back:{heightMode:"auto",height:18},
- Sleeve:{heightMode:"auto",height:18},Gusset:{heightMode:"auto",height:18},
- Shoulder:{heightMode:"auto",height:18}
-};
 let undoStack=[],redoStack=[],historyLock=false,dragIndex=null;
-function snapshot(){return JSON.stringify({panels,panelSettings,targetWidth:+$("targetWidth").value})}
+
+function makeFieldSection(items=[]){
+ return {id:uid(),type:"field",name:"Field section",heightMode:"auto",height:18,items:items.map(normalizeItem)};
+}
+function makeBandSection(motifId=null){
+ return {id:uid(),type:"band",name:"Horizontal band",motifId:motifId||selectedMotifId||null,
+   verticalRepeats:1,fitMode:"center",offset:0,filler:K,mirrorAlternate:false};
+}
+function makeDividerSection(){
+ return {id:uid(),type:"divider",name:"Row divider",rows:2,stitch:P};
+}
+function normalizeSection(raw){
+ if(!raw||!raw.type)return makeFieldSection([]);
+ if(raw.type==="field")return Object.assign(makeFieldSection([]),raw,{items:(raw.items||[]).map(normalizeItem)});
+ if(raw.type==="band")return Object.assign(makeBandSection(raw.motifId),raw);
+ if(raw.type==="divider")return Object.assign(makeDividerSection(),raw);
+ return makeFieldSection([]);
+}
+function ensureSections(){
+ Object.keys(panels).forEach(k=>{
+  const value=Array.isArray(panels[k])?panels[k]:[];
+  const looksOld=value.length&&value.every(x=>x&&(x.type==="motif"||x.type==="spacer"));
+  if(looksOld)panels[k]=[makeFieldSection(value)];
+  else panels[k]=value.map(normalizeSection);
+ });
+ if(!panels[activePanel].length){
+  const section=makeFieldSection([]);
+  panels[activePanel].push(section);
+  selectedSectionId=section.id;
+ }
+ if(!panels[activePanel].some(s=>s.id===selectedSectionId))selectedSectionId=panels[activePanel][0]?.id||null;
+}
+function activeSection(){ensureSections();return panels[activePanel].find(s=>s.id===selectedSectionId)||panels[activePanel][0]||null}
+function snapshot(){return JSON.stringify({panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId})}
 function remember(){if(historyLock)return;undoStack.push(snapshot());if(undoStack.length>80)undoStack.shift();redoStack=[];updateHistoryUI()}
-function applySnapshot(raw){historyLock=true;const s=JSON.parse(raw);panels=s.panels;panelSettings=s.panelSettings;$("targetWidth").value=s.targetWidth;syncPanelSettingsUI();renderPanel();historyLock=false;updateHistoryUI()}
+function applySnapshot(raw){
+ historyLock=true;
+ const s=JSON.parse(raw);
+ panels=s.panels||panels;
+ $("targetWidth").value=s.targetWidth||49;
+ activePanel=s.activePanel||activePanel;
+ selectedSectionId=s.selectedSectionId||null;
+ ensureSections();
+ document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("active",x.dataset.panel===activePanel));
+ renderPanel();
+ historyLock=false;
+ updateHistoryUI();
+}
 function undo(){if(!undoStack.length)return;redoStack.push(snapshot());applySnapshot(undoStack.pop())}
 function redo(){if(!redoStack.length)return;undoStack.push(snapshot());applySnapshot(redoStack.pop())}
 function updateHistoryUI(){$("undoBtn").disabled=!undoStack.length;$("redoBtn").disabled=!redoStack.length;$("historyStatus").textContent=`${undoStack.length} undo step${undoStack.length===1?"":"s"}`}
-
 
 const K="knit",P="purl",CR="cableR",CL="cableL",T="twist";
 function matrixFromStrings(lines){
@@ -465,12 +524,21 @@ function saveMotif(){
 }
 $("saveMotif").onclick=saveMotif;$("newMotif").onclick=newMotif;
 $("clearGrid").onclick=()=>{editorData=blank(+$("motifWidth").value,+$("motifHeight").value);renderEditor()};
-$("deleteMotif").onclick=()=>{if(!selectedMotifId)return;motifs=motifs.filter(m=>m.id!==selectedMotifId);Object.values(panels).forEach(p=>{for(let i=p.length-1;i>=0;i--)if(p[i].motifId===selectedMotifId)p.splice(i,1)});newMotif();renderPanel()};
+$("deleteMotif").onclick=()=>{
+ if(!selectedMotifId)return;
+ motifs=motifs.filter(m=>m.id!==selectedMotifId);
+ Object.values(panels).forEach(sections=>sections.forEach(section=>{
+  if(section.type==="field")section.items=section.items.filter(item=>item.motifId!==selectedMotifId);
+  if(section.type==="band"&&section.motifId===selectedMotifId)section.motifId=null;
+ }));
+ newMotif();renderPanel();
+};
 
 document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
- activePanel=b.dataset.panel;syncPanelSettingsUI();renderPanel();
+ activePanel=b.dataset.panel;selectedSectionId=null;ensureSections();renderPanel();
 });
+
 function repeatSlice(m){
  const x=m.repeat.x-1,y=m.repeat.y-1,w=m.repeat.width,h=m.repeat.height;
  return m.data.slice(y,y+h).map(r=>r.slice(x,x+w));
@@ -486,7 +554,7 @@ function motifTile(item){
  const m=motifs.find(x=>x.id===item.motifId);if(!m)return [[]];
  let base=repeatSlice(m).map(r=>[...r]);
  if(item.mirrored)base=base.map(r=>[...r].reverse());
- let horizontal=Array.from({length:base.length},()=>[]);
+ const horizontal=Array.from({length:base.length},()=>[]);
  for(let n=0;n<item.hRepeat;n++)base.forEach((r,i)=>horizontal[i].push(...r));
  return horizontal;
 }
@@ -495,10 +563,9 @@ function naturalHeight(item){
  const m=motifs.find(x=>x.id===item.motifId);if(!m)return 0;
  return m.repeat.height*Math.max(1,item.vRepeat);
 }
-function getPanelHeight(){
- const set=panelSettings[activePanel];
- if(set.heightMode==="fixed")return Math.max(1,+set.height||1);
- const heights=panels[activePanel].map(raw=>{
+function fieldHeight(section){
+ if(section.heightMode==="fixed")return Math.max(1,+section.height||1);
+ const heights=section.items.map(raw=>{
    const i=normalizeItem(raw);
    if(i.type==="spacer")return 0;
    if(i.vMode==="fill")return motifs.find(m=>m.id===i.motifId)?.repeat.height||1;
@@ -509,7 +576,7 @@ function getPanelHeight(){
 function verticalized(raw,panelH){
  const item=normalizeItem(raw);
  if(item.type==="spacer")return Array.from({length:panelH},()=>Array(item.width).fill(item.stitch));
- const base=motifTile(item),unitH=base.length,w=base[0]?.length||0;
+ const base=motifTile(item),unitH=Math.max(1,base.length),w=base[0]?.length||0;
  let reps=item.vMode==="fill"?Math.max(1,Math.ceil(panelH/unitH)):Math.max(1,item.vRepeat);
  let tiled=[];
  for(let n=0;n<reps;n++)tiled.push(...base.map(r=>[...r]));
@@ -524,10 +591,7 @@ function verticalized(raw,panelH){
    return Array(w).fill(item.fillStitch);
  });
  const before=Math.max(0,+item.gapBefore||0),after=Math.max(0,+item.gapAfter||0);
- if(before||after)rows=rows.map(r=>[
-   ...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)
- ]);
- return rows;
+ return rows.map(r=>[...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)]);
 }
 function itemWidth(raw){
  const i=normalizeItem(raw);
@@ -535,65 +599,88 @@ function itemWidth(raw){
  const m=motifs.find(x=>x.id===i.motifId);
  return m?(m.repeat.width*i.hRepeat+i.gapBefore+i.gapAfter):0;
 }
-function syncPanelSettingsUI(){
- const s=panelSettings[activePanel];
- $("panelHeightMode").value=s.heightMode;$("panelHeight").value=s.height;
- $("panelHeight").disabled=s.heightMode!=="fixed";
+function fieldRows(section){
+ const h=fieldHeight(section);
+ const chunks=section.items.map(i=>verticalized(i,h));
+ return Array.from({length:h},(_,r)=>chunks.flatMap(c=>c[r]||[]));
+}
+function bandRows(section,target){
+ const m=motifs.find(x=>x.id===section.motifId);
+ if(!m)return [Array(target).fill(section.filler||K)];
+ const unit=repeatSlice(m),unitW=m.repeat.width,unitH=m.repeat.height;
+ const reps=Math.max(0,Math.floor(target/unitW));
+ const used=reps*unitW,leftover=Math.max(0,target-used);
+ let before=0,after=leftover;
+ if(section.fitMode==="center"){before=Math.floor(leftover/2);after=leftover-before}
+ if(section.fitMode==="custom"){before=Math.max(0,Math.min(leftover,+section.offset||0));after=leftover-before}
+ const horizontal=unit.map(row=>{
+  let body=[];
+  for(let n=0;n<reps;n++){
+   let piece=[...row];
+   if(section.mirrorAlternate&&n%2===1)piece.reverse();
+   body.push(...piece);
+  }
+  return [...Array(before).fill(section.filler),...body,...Array(after).fill(section.filler)];
+ });
+ let rows=[];
+ for(let v=0;v<Math.max(1,+section.verticalRepeats||1);v++)rows.push(...horizontal.map(r=>[...r]));
+ return rows;
+}
+function dividerRows(section,target){
+ return Array.from({length:Math.max(1,+section.rows||1)},()=>Array(target).fill(section.stitch||P));
+}
+function sectionRows(section,target){
+ if(section.type==="field")return fieldRows(section);
+ if(section.type==="band")return bandRows(section,target);
+ return dividerRows(section,target);
+}
+function sectionHeight(section){
+ if(section.type==="field")return fieldHeight(section);
+ if(section.type==="band"){
+  const m=motifs.find(x=>x.id===section.motifId);
+  return (m?.repeat.height||1)*Math.max(1,+section.verticalRepeats||1);
+ }
+ return Math.max(1,+section.rows||1);
 }
 function control(label,html){return `<label>${label}${html}</label>`}
-function renderPanel(){
- const panel=panels[activePanel],list=$("panelList");list.innerHTML="";
- if(!panel.length)list.innerHTML='<div class="drop-hint">Drag a motif here from the library, or add a spacer.</div>';list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};list.ondrop=e=>{e.preventDefault();list.classList.remove("drag-over");const motifId=e.dataTransfer.getData("application/x-gansey-motif");if(motifId){remember();panel.push(normalizeItem({type:"motif",motifId}));renderPanel()}};
+
+function renderFieldItems(section,host){
+ const panel=section.items;
+ const list=document.createElement("div");list.className="panel-list";
+ if(!panel.length)list.innerHTML='<div class="drop-hint">Drag a motif here, use “Add selected motif,” or add a spacer.</div>';
+ list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};
+ list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};
+ list.ondrop=e=>{
+  e.preventDefault();list.classList.remove("drag-over");
+  const motifId=e.dataTransfer.getData("application/x-gansey-motif");
+  if(motifId){remember();panel.push(normalizeItem({type:"motif",motifId}));renderPanel()}
+ };
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
-  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.draggable=true;block.dataset.index=index;
-  block.ondragstart=e=>{dragIndex=index;block.classList.add("dragging");e.dataTransfer.setData("application/x-gansey-block",String(index));e.dataTransfer.effectAllowed="move"};
-  block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging");document.querySelectorAll(".panel-block").forEach(x=>x.classList.remove("drop-before","drop-after"))};
-  block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault();const r=block.getBoundingClientRect();block.classList.toggle("drop-before",e.clientX<r.left+r.width/2);block.classList.toggle("drop-after",e.clientX>=r.left+r.width/2)};
-  block.ondragleave=()=>block.classList.remove("drop-before","drop-after");
-  block.ondrop=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault();e.stopPropagation();const r=block.getBoundingClientRect(),after=e.clientX>=r.left+r.width/2;remember();const moved=panel.splice(dragIndex,1)[0];let at=index;if(dragIndex<index)at--;if(after)at++;panel.splice(Math.max(0,Math.min(panel.length,at)),0,moved);dragIndex=null;renderPanel()};
+  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.draggable=true;
+  block.ondragstart=e=>{dragIndex=index;block.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+  block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging")};
+  block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault()};
+  block.ondrop=e=>{
+   if(dragIndex===null||dragIndex===index)return;e.preventDefault();e.stopPropagation();remember();
+   const moved=panel.splice(dragIndex,1)[0];panel.splice(index,0,moved);dragIndex=null;renderPanel()
+  };
   if(item.type==="spacer"){
-   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills panel height</div>`;
+   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills section height</div>`;
    const controls=document.createElement("div");controls.className="block-controls";
    controls.innerHTML=control("Width",`<input data-field="width" type="number" min="1" value="${item.width}">`)+
      control("Texture",`<select data-field="stitch"><option value="knit"${item.stitch===K?" selected":""}>Knit</option><option value="purl"${item.stitch===P?" selected":""}>Purl</option></select>`);
    block.appendChild(controls);
-   const spacerTools=document.createElement("div");
-   spacerTools.className="panel-toolbar";
-   spacerTools.innerHTML='<button type="button" data-a="duplicate">Duplicate</button><button type="button" data-a="left">← Move</button><button type="button" data-a="right">Move →</button>';
-   spacerTools.addEventListener("click",e=>{
-    const action=e.target.dataset.a;
-    if(!action)return;
-    e.preventDefault();
-    e.stopPropagation();
-    if(action==="duplicate"){
-      remember();
-      panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
-      renderPanel();
-      return;
-    }
-    if(action==="left"&&index>0){
-      remember();
-      [panel[index-1],panel[index]]=[panel[index],panel[index-1]];
-      renderPanel();
-    }
-    if(action==="right"&&index<panel.length-1){
-      remember();
-      [panel[index+1],panel[index]]=[panel[index],panel[index+1]];
-      renderPanel();
-    }
-   });
-   block.appendChild(spacerTools);
   }else{
-   const m=motifs.find(x=>x.id===item.motifId);if(!m)return;
+   const m=motifs.find(x=>x.id===item.motifId);
+   if(!m)return;
    const d=motifTile(item);
-   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">MOTIF</span><h3>${m.name}</h3>
-   <div class="meta">${itemWidth(item)} sts total · ${m.repeat.height}-row unit</div>`;
+   block.innerHTML=`<button class="remove danger">×</button><span class="block-type">MOTIF</span><h3>${m.name}</h3><div class="meta">${itemWidth(item)} sts · ${m.repeat.height}-row unit</div>`;
    block.appendChild(motifPreview({...m,repeat:{x:1,y:1,width:d[0].length,height:d.length}},d));
    const controls=document.createElement("div");controls.className="block-controls";
    controls.innerHTML=
     control("Horizontal repeats",`<input data-field="hRepeat" type="number" min="1" value="${item.hRepeat}">`)+
-    control("Vertical behavior",`<select data-field="vMode"><option value="count"${item.vMode==="count"?" selected":""}>Set repeats</option><option value="fill"${item.vMode==="fill"?" selected":""}>Fill panel height</option></select>`)+
+    control("Vertical behavior",`<select data-field="vMode"><option value="count"${item.vMode==="count"?" selected":""}>Set repeats</option><option value="fill"${item.vMode==="fill"?" selected":""}>Fill section height</option></select>`)+
     control("Vertical repeats",`<input data-field="vRepeat" type="number" min="1" value="${item.vRepeat}" ${item.vMode==="fill"?"disabled":""}>`)+
     control("Alignment",`<select data-field="align"><option value="top"${item.align==="top"?" selected":""}>Top</option><option value="center"${item.align==="center"?" selected":""}>Center</option><option value="bottom"${item.align==="bottom"?" selected":""}>Bottom</option></select>`)+
     control("Row offset",`<input data-field="rowOffset" type="number" value="${item.rowOffset}">`)+
@@ -601,70 +688,174 @@ function renderPanel(){
     control("Gap before",`<input data-field="gapBefore" type="number" min="0" value="${item.gapBefore}">`)+
     control("Gap after",`<input data-field="gapAfter" type="number" min="0" value="${item.gapAfter}">`);
    block.appendChild(controls);
-   const tools=document.createElement("div");tools.className="panel-toolbar";
-   tools.innerHTML='<button data-a="mirror">Mirror</button><button data-a="duplicate">Duplicate</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
-   tools.onclick=e=>{const a=e.target.dataset.a;if(!a)return;remember();
-    if(a==="mirror")item.mirrored=!item.mirrored;
-    if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
-    if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
-    if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
-    renderPanel()
-   };block.appendChild(tools);
   }
+  const tools=document.createElement("div");tools.className="panel-toolbar";
+  tools.innerHTML=(item.type==="motif"?'<button data-a="mirror">Mirror</button>':'')+'<button data-a="duplicate">Duplicate</button><button data-a="left">← Move</button><button data-a="right">Move →</button>';
+  tools.onclick=e=>{
+   const a=e.target.dataset.a;if(!a)return;remember();
+   if(a==="mirror")item.mirrored=!item.mirrored;
+   if(a==="duplicate")panel.splice(index+1,0,JSON.parse(JSON.stringify(item)));
+   if(a==="left"&&index>0)[panel[index-1],panel[index]]=[panel[index],panel[index-1]];
+   if(a==="right"&&index<panel.length-1)[panel[index+1],panel[index]]=[panel[index],panel[index+1]];
+   renderPanel();
+  };
+  block.appendChild(tools);
   block.querySelector(".remove").onclick=()=>{remember();panel.splice(index,1);renderPanel()};
-  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{remember();
-    const f=el.dataset.field;
-    item[f]=el.tagName==="INPUT"?Number(el.value):el.value;
-    renderPanel();
+  block.querySelectorAll("[data-field]").forEach(el=>el.onchange=()=>{
+   remember();item[el.dataset.field]=el.tagName==="INPUT"?Number(el.value):el.value;renderPanel()
   });
   list.appendChild(block);
- });renderChart();
+ });
+ host.appendChild(list);
+ const breakdown=document.createElement("div");breakdown.className="width-breakdown";
+ panel.forEach((raw,i)=>{
+  const item=normalizeItem(raw),m=item.type==="spacer"?null:motifs.find(x=>x.id===item.motifId),chip=document.createElement("span");
+  chip.className="width-chip";chip.innerHTML=`<strong>${i+1}.</strong> ${item.type==="spacer"?(item.stitch===P?"Purl spacer":"Knit spacer"):(m?.name||"Motif")}: ${itemWidth(item)} sts`;
+  breakdown.appendChild(chip)
+ });
+ host.appendChild(breakdown);
 }
+
+function renderPanel(){
+ ensureSections();
+ const sections=panels[activePanel],stack=$("sectionStack");stack.innerHTML="";
+ const target=Math.max(1,+$("targetWidth").value||1);
+ sections.forEach((section,index)=>{
+  const card=document.createElement("div");
+  card.className="section-card"+(section.id===selectedSectionId?" active-section":"");
+  card.onclick=e=>{if(!e.target.closest("button,input,select,label")){selectedSectionId=section.id;renderPanel()}};
+  const head=document.createElement("div");head.className="section-head";
+  const title=document.createElement("div");
+  title.innerHTML=`<span class="section-badge">${section.type==="field"?"FIELD":section.type==="band"?"HORIZONTAL BAND":"ROW DIVIDER"}</span><h3>${section.name||"Section"}</h3><div class="section-summary">${sectionHeight(section)} rows</div>`;
+  const tools=document.createElement("div");tools.className="section-tools";
+  tools.innerHTML='<button data-s="select">Select</button><button data-s="duplicate">Duplicate</button><button data-s="up">↑</button><button data-s="down">↓</button><button class="danger" data-s="delete">Delete</button>';
+  tools.onclick=e=>{
+   const a=e.target.dataset.s;if(!a)return;e.stopPropagation();
+   if(a==="select"){selectedSectionId=section.id;renderPanel();return}
+   remember();
+   if(a==="duplicate"){const copy=JSON.parse(JSON.stringify(section));copy.id=uid();sections.splice(index+1,0,copy);selectedSectionId=copy.id}
+   if(a==="up"&&index>0)[sections[index-1],sections[index]]=[sections[index],sections[index-1]];
+   if(a==="down"&&index<sections.length-1)[sections[index+1],sections[index]]=[sections[index],sections[index+1]];
+   if(a==="delete"){sections.splice(index,1);selectedSectionId=sections[Math.min(index,sections.length-1)]?.id||null}
+   renderPanel();
+  };
+  head.append(title,tools);card.appendChild(head);
+
+  if(section.type==="field"){
+   const settings=document.createElement("div");settings.className="section-settings";
+   settings.innerHTML=
+    control("Section name",`<input data-sec="name" type="text" value="${section.name||"Field section"}">`)+
+    control("Height",`<select data-sec="heightMode"><option value="auto"${section.heightMode==="auto"?" selected":""}>Auto: tallest block</option><option value="fixed"${section.heightMode==="fixed"?" selected":""}>Fixed rows</option></select>`)+
+    control("Fixed rows",`<input data-sec="height" type="number" min="1" value="${section.height}" ${section.heightMode!=="fixed"?"disabled":""}>`)+
+    control("Current width",`<input value="${section.items.reduce((s,i)=>s+itemWidth(i),0)} / ${target} sts" disabled>`);
+   card.appendChild(settings);
+   const actions=document.createElement("div");actions.className="builder-actions";
+   actions.innerHTML='<button class="ghost" data-add="knit">+ Knit spacer</button><button class="ghost" data-add="purl">+ Purl spacer</button><span class="small">“Add selected motif” adds to this field while it is selected.</span>';
+   actions.onclick=e=>{
+    const a=e.target.dataset.add;if(!a)return;remember();
+    section.items.push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch:a==="purl"?P:K});renderPanel()
+   };
+   card.appendChild(actions);
+   renderFieldItems(section,card);
+  }else if(section.type==="band"){
+   const m=motifs.find(x=>x.id===section.motifId);
+   const settings=document.createElement("div");settings.className="section-settings";
+   settings.innerHTML=
+    control("Section name",`<input data-sec="name" type="text" value="${section.name||"Horizontal band"}">`)+
+    control("Band motif",`<select data-sec="motifId">${motifs.map(x=>`<option value="${x.id}"${x.id===section.motifId?" selected":""}>${x.name}</option>`).join("")}</select>`)+
+    control("Vertical repeats",`<input data-sec="verticalRepeats" type="number" min="1" value="${section.verticalRepeats}">`)+
+    control("Fit across width",`<select data-sec="fitMode"><option value="center"${section.fitMode==="center"?" selected":""}>Center whole repeats</option><option value="left"${section.fitMode==="left"?" selected":""}>Start at left</option><option value="custom"${section.fitMode==="custom"?" selected":""}>Custom offset</option></select>`)+
+    control("Left offset",`<input data-sec="offset" type="number" min="0" value="${section.offset}" ${section.fitMode!=="custom"?"disabled":""}>`)+
+    control("Side filler",`<select data-sec="filler"><option value="knit"${section.filler===K?" selected":""}>Knit</option><option value="purl"${section.filler===P?" selected":""}>Purl</option></select>`)+
+    control("Alternating repeats",`<select data-sec="mirrorAlternate"><option value="false"${!section.mirrorAlternate?" selected":""}>Normal</option><option value="true"${section.mirrorAlternate?" selected":""}>Mirror every other</option></select>`);
+   card.appendChild(settings);
+   const unitW=m?.repeat.width||0,leftover=unitW?target%unitW:target;
+   if(m&&leftover){
+    const warn=document.createElement("div");warn.className="section-warning";
+    warn.textContent=`${m.name} has a ${unitW}-stitch repeat. ${leftover} stitch${leftover===1?"":"es"} will be filled at the edge${section.fitMode==="center"?"s":""}.`;
+    card.appendChild(warn);
+   }
+   const preview=document.createElement("div");preview.className="band-preview";
+   const rows=bandRows(section,target),grid=document.createElement("div");grid.className="band-grid";grid.style.gridTemplateColumns=`repeat(${target},12px)`;
+   rows.forEach(row=>row.forEach(v=>{const c=document.createElement("div");c.className="band-cell "+v;grid.appendChild(c)}));preview.appendChild(grid);card.appendChild(preview);
+  }else{
+   const settings=document.createElement("div");settings.className="section-settings";
+   settings.innerHTML=
+    control("Section name",`<input data-sec="name" type="text" value="${section.name||"Row divider"}">`)+
+    control("Rows",`<input data-sec="rows" type="number" min="1" value="${section.rows}">`)+
+    control("Texture",`<select data-sec="stitch"><option value="knit"${section.stitch===K?" selected":""}>Knit</option><option value="purl"${section.stitch===P?" selected":""}>Purl</option></select>`);
+   card.appendChild(settings);
+  }
+  card.querySelectorAll("[data-sec]").forEach(el=>el.onchange=()=>{
+   remember();const key=el.dataset.sec;
+   let value=el.tagName==="INPUT"&&el.type==="number"?Number(el.value):el.value;
+   if(key==="mirrorAlternate")value=value==="true";
+   section[key]=value;renderPanel()
+  });
+  stack.appendChild(card);
+ });
+ if(!sections.length)stack.innerHTML='<div class="drop-hint">Add a field, horizontal band, or row divider to begin.</div>';
+ renderChart();
+}
+
 $("addSelected").onclick=()=>{
  if(!selectedMotifId)return alert("Select a motif first.");
- remember();panels[activePanel].push(normalizeItem({type:"motif",motifId:selectedMotifId}));
- renderPanel()
-};
-function addSpacer(stitch){
- remember();panels[activePanel].push({type:"spacer",width:Math.max(1,+$("spacerWidth").value||1),stitch});
+ const section=activeSection();if(!section)return;
+ remember();
+ if(section.type==="field")section.items.push(normalizeItem({type:"motif",motifId:selectedMotifId}));
+ else if(section.type==="band")section.motifId=selectedMotifId;
+ else return alert("Select a field section or horizontal band first.");
  renderPanel();
-}
-$("addKnitSpacer").onclick=()=>addSpacer(K);
-$("addPurlSpacer").onclick=()=>addSpacer(P);
-$("clearPanel").onclick=()=>{if(!panels[activePanel].length)return;remember();panels[activePanel]=[];renderPanel()};
-$("targetWidth").oninput=renderChart;$("targetWidth").onchange=()=>remember();
-$("panelHeightMode").onchange=()=>{
- remember();panelSettings[activePanel].heightMode=$("panelHeightMode").value;syncPanelSettingsUI();renderPanel()
 };
-$("panelHeight").onchange=()=>{remember();panelSettings[activePanel].height=Math.max(1,+$("panelHeight").value||1);renderPanel()};
+$("addFieldSection").onclick=()=>{remember();const s=makeFieldSection([]);panels[activePanel].push(s);selectedSectionId=s.id;renderPanel()};
+$("addBandSection").onclick=()=>{remember();const s=makeBandSection();panels[activePanel].push(s);selectedSectionId=s.id;renderPanel()};
+$("addDividerSection").onclick=()=>{remember();const s=makeDividerSection();panels[activePanel].push(s);selectedSectionId=s.id;renderPanel()};
+$("clearPanel").onclick=()=>{if(!panels[activePanel].length)return;remember();panels[activePanel]=[];selectedSectionId=null;renderPanel()};
+$("targetWidth").oninput=renderPanel;$("targetWidth").onchange=()=>remember();
 
-$("undoBtn").onclick=undo;$("redoBtn").onclick=redo;document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo()}});
+$("undoBtn").onclick=undo;$("redoBtn").onclick=redo;
+document.addEventListener("keydown",e=>{
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo()}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo()}
+});
 
 function renderChart(){
- const panel=panels[activePanel],total=panel.reduce((s,i)=>s+itemWidth(i),0),target=+$("targetWidth").value,panelH=getPanelHeight();
- $("totalWidth").textContent=`${total} stitches`;$("totalWidth").className="total "+(total===target?"target-ok":"target-bad");
- $("totalHeight").textContent=`${panelH} rows`;
- const bd=$("widthBreakdown");bd.innerHTML="";panel.forEach((raw,i)=>{const item=normalizeItem(raw),m=item.type==="spacer"?null:motifs.find(x=>x.id===item.motifId),chip=document.createElement("span");chip.className="width-chip";chip.innerHTML=`<strong>${i+1}.</strong> ${item.type==="spacer"?(item.stitch===P?"Purl spacer":"Knit spacer"):(m?.name||"Motif")}: ${itemWidth(item)} sts`;bd.appendChild(chip)});
+ ensureSections();
+ const target=Math.max(1,+$("targetWidth").value||1),sections=panels[activePanel];
+ const all=sections.map(section=>({section,rows:sectionRows(section,target)}));
+ const totalH=all.reduce((s,x)=>s+x.rows.length,0);
+ $("totalWidth").textContent=`${target} stitches`;$("totalWidth").className="total target-ok";
+ $("totalHeight").textContent=`${totalH} rows`;
  const p=$("chartPreview");p.innerHTML="";
- if(!panel.length){p.innerHTML='<div class="empty">The two-dimensional assembled chart will appear here.</div>';return}
- const chunks=panel.map(i=>verticalized(i,panelH));
- const rows=Array.from({length:panelH},(_,r)=>chunks.flatMap(c=>c[r]||[]));
- const g=document.createElement("div");g.className="composed-grid";g.style.gridTemplateColumns=`repeat(${Math.max(1,total)},19px)`;
- rows.forEach(row=>row.forEach(v=>{const c=document.createElement("div");c.className="composed-cell "+v;g.appendChild(c)}));p.appendChild(g);
+ if(!all.length){p.innerHTML='<div class="empty">The assembled section chart will appear here.</div>';return}
+ all.forEach((entry,index)=>{
+  const label=document.createElement("div");label.className="chart-section-label";
+  label.textContent=`${index+1}. ${entry.section.name} · ${entry.rows.length} rows`;
+  p.appendChild(label);
+  const grid=document.createElement("div");grid.className="composed-grid";grid.style.gridTemplateColumns=`repeat(${target},19px)`;
+  entry.rows.forEach(row=>{
+   const normalized=[...row.slice(0,target),...Array(Math.max(0,target-row.length)).fill(K)].slice(0,target);
+   normalized.forEach(v=>{const c=document.createElement("div");c.className="composed-cell "+v;grid.appendChild(c)})
+  });
+  p.appendChild(grid);
+  if(index<all.length-1){const d=document.createElement("div");d.className="chart-section-divider";p.appendChild(d)}
+ });
 }
+
 $("smartSuggest").onclick=()=>{
- const target=+$("targetWidth").value,q=$("smartQuery").value.toLowerCase(),s=$("suggestions");s.innerHTML="";
+ const section=activeSection(),target=+$("targetWidth").value,q=$("smartQuery").value.toLowerCase(),s=$("suggestions");s.innerHTML="";
+ if(!section||section.type!=="field"){s.innerHTML='<div class="suggestion">Select a field section first.</div>';return}
  const candidates=motifs.filter(m=>!q||m.name.toLowerCase().includes(q)||m.tags.some(t=>q.includes(t.toLowerCase()))||m.family.toLowerCase().includes(q));
  let combos=[];
  for(const a of candidates)for(const b of motifs)for(let ra=1;ra<=6;ra++)for(let rb=0;rb<=6;rb++){
    const width=a.repeat.width*ra+b.repeat.width*rb;if(width===target)combos.push([{m:a,r:ra},{m:b,r:rb}]);
    if(combos.length>=4)break;
  }
- if(!combos.length){s.innerHTML='<div class="suggestion">No exact two-motif combination found yet. Try a different target or add more motifs to the library.</div>';return}
+ if(!combos.length){s.innerHTML='<div class="suggestion">No exact two-motif combination found. Try a different target or use spacers.</div>';return}
  combos.slice(0,4).forEach((combo,i)=>{
    const d=document.createElement("div");d.className="suggestion";
-   d.innerHTML=`<strong>Option ${i+1}</strong><br>${combo.filter(x=>x.r).map(x=>`${x.m.name} × ${x.r}`).join(" + ")} <button data-i="${i}" style="float:right">Use</button>`;
-   d.querySelector("button").onclick=()=>{remember();panels[activePanel]=combo.filter(x=>x.r).map(x=>normalizeItem({type:"motif",motifId:x.m.id,hRepeat:x.r}));renderPanel()};s.appendChild(d);
+   d.innerHTML=`<strong>Option ${i+1}</strong><br>${combo.filter(x=>x.r).map(x=>`${x.m.name} × ${x.r}`).join(" + ")} <button style="float:right">Use</button>`;
+   d.querySelector("button").onclick=()=>{remember();section.items=combo.filter(x=>x.r).map(x=>normalizeItem({type:"motif",motifId:x.m.id,hRepeat:x.r}));renderPanel()};s.appendChild(d);
  });
 };
 
@@ -691,22 +882,34 @@ $("importLibrary").onchange=e=>{
 };
 $("reloadLibrary").onclick=()=>loadExternalLibrary(true);
 
-function project(){return {version:6,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
+function project(){return {version:7,motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId}}
 function restore(p){
- motifs=p.motifs||[];
+ motifs=p.motifs||motifs;
  panels=p.panels||panels;
- panelSettings=p.panelSettings||panelSettings;
- Object.keys(panels).forEach(k=>panels[k]=panels[k].map(normalizeItem));
- $("targetWidth").value=p.targetWidth||49;activePanel=p.activePanel||"Front";selectedMotifId=null;
+ activePanel=p.activePanel||"Front";
+ selectedSectionId=p.selectedSectionId||null;
+ $("targetWidth").value=p.targetWidth||49;
+ ensureSections();
+ selectedMotifId=null;
  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("active",x.dataset.panel===activePanel));
- undoStack=[];redoStack=[];syncPanelSettingsUI();familyOptions();renderLibrary();renderPanel();updateHistoryUI()
+ undoStack=[];redoStack=[];familyOptions();renderLibrary();renderPanel();updateHistoryUI()
 }
-$("exportJson").onclick=()=>{const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.4.json";a.click();URL.revokeObjectURL(a.href)};
-$("importJson").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{restore(JSON.parse(r.result))}catch{alert("That JSON file could not be read.")}};r.readAsText(f)};
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV4",JSON.stringify(project()));alert("Project saved in this browser.")};
-$("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved project found.")};
+$("exportJson").onclick=()=>{
+ const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.7.json";a.click();URL.revokeObjectURL(a.href)
+};
+$("importJson").onchange=e=>{
+ const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{restore(JSON.parse(r.result))}catch(error){alert("That JSON file could not be read.")}};
+ r.readAsText(f)
+};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV7",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("loadLocal").onclick=()=>{
+ const raw=localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
+ raw?restore(JSON.parse(raw)):alert("No saved project found.")
+};
 
-newMotif();syncPanelSettingsUI();updateHistoryUI();loadExternalLibrary(true);
+newMotif();ensureSections();updateHistoryUI();loadExternalLibrary(true);
 </script>
 </body>
 </html>
