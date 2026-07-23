@@ -1,0 +1,2443 @@
+{
+  "format": "gansey-studio-motif-library",
+  "version": 1,
+  "description": "Starter motif library for Gansey Studio v0.6.0",
+  "motifs": [
+    {
+      "id": "starter-1",
+      "name": "Seed Stitch",
+      "family": "Background Patterns",
+      "tags": [
+        "seed",
+        "background",
+        "texture",
+        "2x2"
+      ],
+      "favorite": true,
+      "width": 2,
+      "height": 2,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 2,
+        "height": 2
+      },
+      "data": [
+        [
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-2",
+      "name": "Double Moss",
+      "family": "Background Patterns",
+      "tags": [
+        "moss",
+        "background",
+        "texture"
+      ],
+      "favorite": false,
+      "width": 4,
+      "height": 4,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 4,
+        "height": 4
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-3",
+      "name": "Little Checks",
+      "family": "Background Patterns",
+      "tags": [
+        "check",
+        "background",
+        "geometric"
+      ],
+      "favorite": false,
+      "width": 4,
+      "height": 4,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 4,
+        "height": 4
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-4",
+      "name": "Basketweave",
+      "family": "Background Patterns",
+      "tags": [
+        "basket",
+        "background",
+        "block"
+      ],
+      "favorite": false,
+      "width": 6,
+      "height": 6,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 6,
+        "height": 6
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-5",
+      "name": "Broken Rib",
+      "family": "Background Patterns",
+      "tags": [
+        "rib",
+        "background",
+        "vertical"
+      ],
+      "favorite": false,
+      "width": 4,
+      "height": 2,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 4,
+        "height": 2
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-6",
+      "name": "Diagonal Stripe",
+      "family": "Diagonal Patterns",
+      "tags": [
+        "diagonal",
+        "stripe",
+        "simple"
+      ],
+      "favorite": false,
+      "width": 5,
+      "height": 5,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 5,
+        "height": 5
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-7",
+      "name": "Vertical Herringbone",
+      "family": "Diagonal Patterns",
+      "tags": [
+        "herringbone",
+        "vertical",
+        "zigzag"
+      ],
+      "favorite": false,
+      "width": 10,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 10,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-8",
+      "name": "Chevron",
+      "family": "Diagonal Patterns",
+      "tags": [
+        "chevron",
+        "zigzag",
+        "arrow"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-9",
+      "name": "Open Diamond",
+      "family": "Diamond Patterns",
+      "tags": [
+        "diamond",
+        "open",
+        "geometric"
+      ],
+      "favorite": true,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-10",
+      "name": "Filled Diamond",
+      "family": "Diamond Patterns",
+      "tags": [
+        "diamond",
+        "filled",
+        "geometric"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-11",
+      "name": "Double Diamond",
+      "family": "Diamond Patterns",
+      "tags": [
+        "diamond",
+        "double",
+        "centerpiece"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-12",
+      "name": "Diamond Lattice",
+      "family": "Diamond Patterns",
+      "tags": [
+        "diamond",
+        "lattice",
+        "allover"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-13",
+      "name": "Anchor",
+      "family": "Picture Motifs",
+      "tags": [
+        "anchor",
+        "nautical",
+        "picture"
+      ],
+      "favorite": true,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-14",
+      "name": "Tree",
+      "family": "Picture Motifs",
+      "tags": [
+        "tree",
+        "life",
+        "picture"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-15",
+      "name": "Wave Crest",
+      "family": "Picture Motifs",
+      "tags": [
+        "wave",
+        "sea",
+        "nautical"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 8
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-16",
+      "name": "Ladder",
+      "family": "Vertical Motifs",
+      "tags": [
+        "ladder",
+        "vertical",
+        "column"
+      ],
+      "favorite": false,
+      "width": 6,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 6,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-17",
+      "name": "Twin Columns",
+      "family": "Vertical Motifs",
+      "tags": [
+        "column",
+        "vertical",
+        "pair"
+      ],
+      "favorite": false,
+      "width": 6,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 6,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-18",
+      "name": "Marriage Lines",
+      "family": "Vertical Motifs",
+      "tags": [
+        "marriage",
+        "lines",
+        "vertical"
+      ],
+      "favorite": false,
+      "width": 7,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 7,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "purl",
+          "purl",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-19",
+      "name": "Cable Ladder",
+      "family": "Vertical Motifs with Cables",
+      "tags": [
+        "cable",
+        "ladder",
+        "vertical"
+      ],
+      "favorite": false,
+      "width": 8,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 8,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableR",
+          "cableL",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableR",
+          "cableL",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-20",
+      "name": "Rope Cable",
+      "family": "Vertical Motifs with Cables",
+      "tags": [
+        "rope",
+        "cable",
+        "vertical"
+      ],
+      "favorite": true,
+      "width": 6,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 6,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-21",
+      "name": "Twin Rope Cable",
+      "family": "Vertical Motifs with Cables",
+      "tags": [
+        "rope",
+        "cable",
+        "twin"
+      ],
+      "favorite": false,
+      "width": 8,
+      "height": 8,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 8,
+        "height": 8
+      },
+      "data": [
+        [
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl"
+        ],
+        [
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-22",
+      "name": "Cable and Purl Ribs",
+      "family": "Vertical Motifs with Cables",
+      "tags": [
+        "cable",
+        "rib",
+        "texture"
+      ],
+      "favorite": false,
+      "width": 6,
+      "height": 6,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 6,
+        "height": 6
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableR",
+          "cableL",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "purl",
+          "cableL",
+          "cableR",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-23",
+      "name": "Wave Band",
+      "family": "Horizontal Motifs",
+      "tags": [
+        "wave",
+        "horizontal",
+        "border"
+      ],
+      "favorite": false,
+      "width": 10,
+      "height": 5,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 10,
+        "height": 5
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-24",
+      "name": "Zigzag Band",
+      "family": "Horizontal Motifs",
+      "tags": [
+        "zigzag",
+        "horizontal",
+        "border"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 5,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 5
+      },
+      "data": [
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-25",
+      "name": "Harbor Bars",
+      "family": "Horizontal Motifs",
+      "tags": [
+        "bars",
+        "horizontal",
+        "simple"
+      ],
+      "favorite": false,
+      "width": 10,
+      "height": 5,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 10,
+        "height": 5
+      },
+      "data": [
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-26",
+      "name": "Chain Band",
+      "family": "Horizontal Motifs",
+      "tags": [
+        "chain",
+        "horizontal",
+        "linked"
+      ],
+      "favorite": false,
+      "width": 10,
+      "height": 4,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 10,
+        "height": 4
+      },
+      "data": [
+        [
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "purl",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "purl",
+          "purl"
+        ]
+      ]
+    },
+    {
+      "id": "starter-27",
+      "name": "Small Cross",
+      "family": "Other",
+      "tags": [
+        "cross",
+        "small",
+        "filler"
+      ],
+      "favorite": false,
+      "width": 5,
+      "height": 5,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 5,
+        "height": 5
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ]
+      ]
+    },
+    {
+      "id": "starter-28",
+      "name": "Eight-Point Star",
+      "family": "Other",
+      "tags": [
+        "star",
+        "centerpiece",
+        "geometric"
+      ],
+      "favorite": false,
+      "width": 9,
+      "height": 9,
+      "repeat": {
+        "x": 1,
+        "y": 1,
+        "width": 9,
+        "height": 9
+      },
+      "data": [
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "purl",
+          "knit",
+          "knit"
+        ],
+        [
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "purl",
+          "knit"
+        ],
+        [
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "purl"
+        ],
+        [
+          "knit",
+          "knit",
+          "knit",
+          "knit",
+          "purl",
+          "knit",
+          "knit",
+          "knit",
+          "knit"
+        ]
+      ]
+    }
+  ]
+}

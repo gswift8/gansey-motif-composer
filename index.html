@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.5.0</title>
+<title>Gansey Studio v0.6.0</title>
 <style>
 :root{
   --bg:#f4f4ff; --panel:#ffffffee; --ink:#24223a; --muted:#746f8a;
@@ -121,7 +121,7 @@ button:hover{transform:translateY(-1px)}
     <h1>Gansey Studio</h1>
     <div class="subtitle">A modular chart studio for gansey motifs, repeat units, families, and full garment panels.</div>
   </div>
-  <div class="badge">Motif Library v0.5.0</div>
+  <div class="badge">Data-Driven Library v0.6.0</div>
 </header>
 
 <main>
@@ -199,6 +199,14 @@ button:hover{transform:translateY(-1px)}
       <label><input type="checkbox" id="favoritesOnly"> Favorites only</label>
       <span id="libraryCount" class="small"></span>
     </div>
+    <div class="io" style="margin-top:10px">
+      <button class="ghost" id="exportLibrary">Export motif library</button>
+      <label class="ghost" style="padding:9px 12px;border-radius:12px;cursor:pointer">
+        Import motif library<input id="importLibrary" type="file" accept=".json" hidden>
+      </label>
+      <button class="ghost" id="reloadLibrary">Reload motifs.json</button>
+    </div>
+    <div id="libraryStatus" class="small" style="margin-top:8px"></div>
     <div id="library" class="library" style="margin-top:12px"></div>
   </div>
 </section>
@@ -308,79 +316,67 @@ function motif(name,family,tags,lines,favorite=false){
  return {id:uid(),name,family,tags,favorite,width:data[0].length,height:data.length,
  repeat:{x:1,y:1,width:data[0].length,height:data.length},data};
 }
-const samples=[
- motif("Seed Stitch","Background Patterns",["seed","background","texture","2x2"],["o.",".o"],true),
- motif("Double Moss","Background Patterns",["moss","background","texture"],["oo..","oo..","..oo","..oo"]),
- motif("Little Checks","Background Patterns",["check","background","geometric"],["o.o.",".o.o","o.o.",".o.o"]),
- motif("Basketweave","Background Patterns",["basket","background","block"],["ooo...","ooo...","ooo...","...ooo","...ooo","...ooo"]),
- motif("Broken Rib","Background Patterns",["rib","background","vertical"],["o.o.",".o.o"]),
- motif("Diagonal Stripe","Diagonal Patterns",["diagonal","stripe","simple"],["o....",".o...","..o..","...o.","....o"]),
- motif("Vertical Herringbone","Diagonal Patterns",["herringbone","vertical","zigzag"],[
-  "o........o",".o......o.","..o....o..","...o..o...","....oo....","...o..o...","..o....o..",".o......o."
- ]),
- motif("Chevron","Diagonal Patterns",["chevron","zigzag","arrow"],["o.......o",".o.....o.","..o...o..","...o.o...","....o....","...o.o...","..o...o..",".o.....o."]),
- motif("Open Diamond","Diamond Patterns",["diamond","open","geometric"],[
-  "....o....","...o.o...","..o...o..",".o.....o.","o.......o",".o.....o.","..o...o..","...o.o...","....o...."
- ],true),
- motif("Filled Diamond","Diamond Patterns",["diamond","filled","geometric"],[
-  "....o....","...ooo...","..ooooo..",".ooooooo.","ooooooooo",".ooooooo.","..ooooo..","...ooo...","....o...."
- ]),
- motif("Double Diamond","Diamond Patterns",["diamond","double","centerpiece"],[
-  "....o....","...o.o...","..o.o.o..",".o.o.o.o.","o.o...o.o",".o.o.o.o.","..o.o.o..","...o.o...","....o...."
- ]),
- motif("Diamond Lattice","Diamond Patterns",["diamond","lattice","allover"],[
-  "o...o...o",".o.o.o.o.","..o...o..",".o.o.o.o.","o...o...o",".o.o.o.o.","..o...o..",".o.o.o.o.","o...o...o"
- ]),
- motif("Anchor","Picture Motifs",["anchor","nautical","picture"],[
-  "....o....","...ooo...","....o....","....o....","..ooooo..",".o..o..o.","o...o...o",".oo.o.oo.","..ooooo.."
- ],true),
- motif("Tree","Picture Motifs",["tree","life","picture"],[
-  "....o....","...ooo...","..ooooo..",".ooooooo.","...ooo...","..ooooo..","....o....","...ooo...","..ooooo.."
- ]),
- motif("Wave Crest","Picture Motifs",["wave","sea","nautical"],[
-  "......o..","....oo.o.","...o....o","..o......",".o.......","o........",".o.......","..o......"
- ]),
- motif("Ladder","Vertical Motifs",["ladder","vertical","column"],[
-  "o....o","oooooo","o....o","o....o","oooooo","o....o","o....o","oooooo"
- ]),
- motif("Twin Columns","Vertical Motifs",["column","vertical","pair"],[
-  "oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo","oo..oo"
- ]),
- motif("Marriage Lines","Vertical Motifs",["marriage","lines","vertical"],[
-  "o..o..o","o..o..o",".oo.oo.",".oo.oo.","o..o..o","o..o..o",".oo.oo.",".oo.oo."
- ]),
- motif("Cable Ladder","Vertical Motifs with Cables",["cable","ladder","vertical"],[
-  "oo....oo","oo//\\\\oo","oo....oo","oo....oo","oo//\\\\oo","oo....oo","oo....oo","oo....oo"
- ]),
- motif("Rope Cable","Vertical Motifs with Cables",["rope","cable","vertical"],[
-  "oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo"
- ],true),
- motif("Twin Rope Cable","Vertical Motifs with Cables",["rope","cable","twin"],[
-  "o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o","o/\\oo/\\o","o\\/oo\\/o"
- ]),
- motif("Cable and Purl Ribs","Vertical Motifs with Cables",["cable","rib","texture"],[
-  "oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo","oo/\\oo","oo\\/oo"
- ]),
- motif("Wave Band","Horizontal Motifs",["wave","horizontal","border"],[
-  "..o....o..",".o.o..o.o.","o...oo...o",".o......o.","..o....o.."
- ]),
- motif("Zigzag Band","Horizontal Motifs",["zigzag","horizontal","border"],[
-  "o.......o",".o.....o.","..o...o..","...o.o...","....o...."
- ]),
- motif("Harbor Bars","Horizontal Motifs",["bars","horizontal","simple"],[
-  "oooooooooo","..........","oo..oo..oo","..........","oooooooooo"
- ]),
- motif("Chain Band","Horizontal Motifs",["chain","horizontal","linked"],[
-  ".ooo...ooo","o...o.o...","o...o.o...o",".ooo...ooo"
- ]),
- motif("Small Cross","Other",["cross","small","filler"],[
-  "..o..","..o..","ooooo","..o..","..o.."
- ]),
- motif("Eight-Point Star","Other",["star","centerpiece","geometric"],[
-  "....o....","o...o...o",".o..o..o.","..o.o.o..","ooooooooo","..o.o.o..",".o..o..o.","o...o...o","....o...."
- ])
+let motifs=[];
+const emergencyMotifs=[
+ {
+  id:"emergency-seed",name:"Seed Stitch",family:"Background Patterns",
+  tags:["seed","background","texture"],favorite:true,width:2,height:2,
+  repeat:{x:1,y:1,width:2,height:2},data:[[P,K],[K,P]]
+ }
 ];
-let motifs=JSON.parse(JSON.stringify(samples));
+
+function validateMotif(raw,index=0){
+ const data=Array.isArray(raw.data)?raw.data.map(row=>Array.isArray(row)?row.map(v=>[K,P,CR,CL,T].includes(v)?v:K):[]):[];
+ const height=data.length;
+ const width=height?Math.max(...data.map(row=>row.length)):0;
+ if(!width||!height)throw new Error(`Motif ${index+1} has no valid chart data.`);
+ data.forEach(row=>{while(row.length<width)row.push(K)});
+ const repeat=raw.repeat||{};
+ return {
+  id:String(raw.id||uid()),
+  name:String(raw.name||`Untitled Motif ${index+1}`),
+  family:String(raw.family||"Other"),
+  tags:Array.isArray(raw.tags)?raw.tags.map(String):[],
+  favorite:Boolean(raw.favorite),
+  width,
+  height,
+  repeat:{
+   x:Math.max(1,Math.min(width,Number(repeat.x)||1)),
+   y:Math.max(1,Math.min(height,Number(repeat.y)||1)),
+   width:Math.max(1,Math.min(width,Number(repeat.width)||width)),
+   height:Math.max(1,Math.min(height,Number(repeat.height)||height))
+  },
+  data
+ };
+}
+
+function normalizeLibrary(payload){
+ const list=Array.isArray(payload)?payload:payload?.motifs;
+ if(!Array.isArray(list))throw new Error("The library file must be an array of motifs or an object with a motifs array.");
+ return list.map(validateMotif);
+}
+
+async function loadExternalLibrary(showMessage=true){
+ const status=$("libraryStatus");
+ if(showMessage)status.textContent="Loading motifs.json…";
+ try{
+  const response=await fetch("motifs.json",{cache:"no-store"});
+  if(!response.ok)throw new Error(`HTTP ${response.status}`);
+  const payload=await response.json();
+  motifs=normalizeLibrary(payload);
+  if(showMessage)status.textContent=`Loaded ${motifs.length} motifs from motifs.json.`;
+ }catch(error){
+  motifs=emergencyMotifs.map(validateMotif);
+  if(showMessage)status.textContent="Could not load motifs.json. Using the emergency starter motif. Upload both index.html and motifs.json to the same folder.";
+  console.error("Motif library load failed:",error);
+ }
+ selectedMotifId=motifs[0]?.id||null;
+ familyOptions();
+ renderLibrary();
+ if(motifs[0])loadMotif(motifs[0]);
+ renderPanel();
+}
+
 
 function blank(w,h){return Array.from({length:h},()=>Array(w).fill(K))}
 function resizeEditor(){
@@ -672,7 +668,30 @@ $("smartSuggest").onclick=()=>{
  });
 };
 
-function project(){return {version:4,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
+$("exportLibrary").onclick=()=>{
+ const payload={format:"gansey-studio-motif-library",version:1,exportedAt:new Date().toISOString(),motifs};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gansey-studio-motifs.json";a.click();URL.revokeObjectURL(a.href);
+};
+$("importLibrary").onchange=e=>{
+ const f=e.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{
+  try{
+   motifs=normalizeLibrary(JSON.parse(r.result));
+   selectedMotifId=motifs[0]?.id||null;
+   familyOptions();renderLibrary();
+   if(motifs[0])loadMotif(motifs[0]);else newMotif();
+   renderPanel();
+   $("libraryStatus").textContent=`Imported ${motifs.length} motifs from ${f.name}.`;
+  }catch(error){alert(`That motif library could not be read: ${error.message}`)}
+  e.target.value="";
+ };
+ r.readAsText(f);
+};
+$("reloadLibrary").onclick=()=>loadExternalLibrary(true);
+
+function project(){return {version:6,motifs,panels,panelSettings,targetWidth:+$("targetWidth").value,activePanel}}
 function restore(p){
  motifs=p.motifs||[];
  panels=p.panels||panels;
@@ -687,7 +706,7 @@ $("importJson").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new 
 $("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV4",JSON.stringify(project()));alert("Project saved in this browser.")};
 $("loadLocal").onclick=()=>{const p=localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");p?restore(JSON.parse(p)):alert("No saved project found.")};
 
-newMotif();selectedMotifId=motifs[0].id;loadMotif(motifs[0]);renderLibrary();syncPanelSettingsUI();renderPanel();updateHistoryUI();
+newMotif();syncPanelSettingsUI();updateHistoryUI();loadExternalLibrary(true);
 </script>
 </body>
 </html>
