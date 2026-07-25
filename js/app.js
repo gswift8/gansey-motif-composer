@@ -6,3 +6,4 @@ ensureSections();
 updateHistoryUI();
 loadExternalLibrary(true);
 if(typeof renderProjectOverview==="function")renderProjectOverview();
+if(typeof renderGarmentAssembly==="function")renderGarmentAssembly();

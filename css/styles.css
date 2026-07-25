@@ -452,3 +452,190 @@ button:hover{transform:translateY(-1px)}
     grid-template-columns:repeat(2,minmax(130px,1fr));
   }
 }
+
+
+/* v0.14 garment assembly */
+.assembly-view-controls{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  align-items:end;
+  gap:10px;
+}
+.assembly-view-controls label{
+  display:grid;
+  gap:5px;
+  font-size:.7rem;
+  font-weight:800;
+  color:var(--muted);
+}
+.assembly-view-controls input[type="range"]{width:130px}
+.assembly-checkbox{
+  display:flex!important;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  padding-bottom:9px;
+}
+
+.assembly-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(130px,1fr));
+  gap:9px;
+  margin:16px 0;
+}
+.assembly-metrics div{
+  display:grid;
+  gap:3px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f7f6ff;
+}
+.assembly-metrics span{font-size:.68rem;color:var(--muted)}
+.assembly-metrics strong{font-size:.92rem}
+
+.garment-assembly{
+  --assembly-scale:1;
+  --assembly-cell:calc(4px * var(--assembly-scale));
+  min-height:420px;
+  overflow:auto;
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:
+   linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.82)),
+   repeating-linear-gradient(0deg,transparent 0 23px,#ececf5 24px),
+   repeating-linear-gradient(90deg,transparent 0 23px,#ececf5 24px);
+  scrollbar-gutter:stable;
+}
+.garment-assembly.garment-view{
+  display:grid;
+  grid-template-columns:minmax(125px,.8fr) minmax(190px,1.2fr) minmax(190px,1.2fr) minmax(125px,.8fr);
+  grid-template-areas:
+   ". shoulder-left shoulder-right ."
+   "sleeve-left front back sleeve-right"
+   ". gusset-left gusset-right .";
+  align-items:end;
+  justify-content:center;
+  gap:14px;
+}
+.garment-assembly.exploded-view{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(170px,1fr));
+  grid-template-areas:
+   "front back sleeve-left sleeve-right"
+   "gusset-left gusset-right shoulder-left shoulder-right";
+  align-items:start;
+  gap:14px;
+}
+
+.assembly-panel{
+  display:grid;
+  gap:8px;
+  min-width:0;
+  padding:10px;
+  color:inherit;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 3px 10px rgba(50,50,80,.06);
+}
+.assembly-panel:hover{
+  border-color:var(--peri);
+  transform:translateY(-2px);
+}
+.assembly-panel-header{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:baseline;
+}
+.assembly-panel-header strong{font-size:.82rem}
+.assembly-panel-header span{
+  font-size:.6rem;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.assembly-chart{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fff;
+}
+.assembly-grid{
+  display:grid;
+  gap:1px;
+  width:max-content;
+  max-width:100%;
+}
+.assembly-cell{
+  width:var(--assembly-cell);
+  height:var(--assembly-cell);
+  min-width:2px;
+  min-height:2px;
+  border-radius:1px;
+  background:#f8f8fb;
+}
+.assembly-cell.purl{background:#666b78}
+.assembly-cell.cableR,
+.assembly-cell.cableL,
+.assembly-cell.twist{background:#aaaee9}
+.assembly-empty,
+.assembly-all-empty{
+  color:var(--muted);
+  font-size:.72rem;
+}
+.assembly-all-empty{
+  grid-column:1/-1;
+  align-self:center;
+  justify-self:center;
+  padding:30px;
+}
+.assembly-note{margin-top:9px}
+
+.garment-view .assembly-panel[style*="shoulder"] .assembly-chart,
+.garment-view .assembly-panel[style*="gusset"] .assembly-chart{min-height:48px}
+.garment-view .assembly-panel[style*="sleeve"]{align-self:center}
+
+@media(max-width:1000px){
+  .assembly-metrics{grid-template-columns:repeat(2,minmax(130px,1fr))}
+  .garment-assembly.garment-view{
+    grid-template-columns:repeat(2,minmax(180px,1fr));
+    grid-template-areas:
+     "shoulder-left shoulder-right"
+     "front back"
+     "sleeve-left sleeve-right"
+     "gusset-left gusset-right";
+  }
+  .garment-assembly.exploded-view{
+    grid-template-columns:repeat(2,minmax(180px,1fr));
+    grid-template-areas:
+     "front back"
+     "sleeve-left sleeve-right"
+     "gusset-left gusset-right"
+     "shoulder-left shoulder-right";
+  }
+}
+@media(max-width:600px){
+  .assembly-view-controls{justify-content:flex-start}
+  .assembly-metrics{grid-template-columns:1fr}
+  .garment-assembly.garment-view,
+  .garment-assembly.exploded-view{
+    grid-template-columns:minmax(190px,1fr);
+    grid-template-areas:
+     "front"
+     "back"
+     "sleeve-left"
+     "sleeve-right"
+     "gusset-left"
+     "gusset-right"
+     "shoulder-left"
+     "shoulder-right";
+  }
+}

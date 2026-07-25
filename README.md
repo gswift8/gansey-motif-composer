@@ -1,26 +1,40 @@
-# Gansey Studio v0.13.0 — Layout Workspace Phase
+# Gansey Studio v0.14.0 — Garment Assembly Phase
 
-This phase focuses on keeping large projects comfortable to navigate.
+This release adds a new garment-level planning view.
 
-## Layout tree
+## Garment assembly
 
-- The Layout Tree now has a bounded height and its own vertical scrollbar.
-- Bands with motif or spacer blocks can be expanded and collapsed.
-- Collapse All and Expand All controls are included.
-- Long band and motif names are truncated instead of widening the panel.
+Section 6 shows the Front, Back, Sleeves, Gussets, and Shoulders together.
 
-## Section Composer
+Two views are available:
 
-- Section 3 now has a bounded working height and scrolls vertically as sections
-  and motif blocks are added.
-- Horizontal scrolling remains available.
-- Band name, height, fixed-row, and other settings stay within a controlled width
-  instead of stretching with a long motif strip.
+- Garment map — places the panels in a sweater-like schematic
+- Exploded panels — displays every panel in a regular comparison grid
 
-## Project data
+Each assembly preview:
 
-- Import JSON is now a standard button matching the other Project Data buttons.
-- Existing v0.12 and earlier browser saves remain loadable.
+- is generated from the current chart data
+- shows stitch width and row height
+- can be clicked to open that panel in Section 3
+- updates whenever the project changes
+
+## Assembly controls
+
+- Preview size slider
+- Show or hide empty panels
+- Saved view preferences in exported JSON and browser saves
+
+## Project metrics
+
+The assembly section also reports:
+
+- current target stitch width
+- number of panels with chart data
+- total designed rows
+- total chart cells
+
+The assembly is a planning schematic. It does not yet calculate garment shaping,
+armhole curves, sleeve caps, or finished measurements.
 
 ## GitHub update
 

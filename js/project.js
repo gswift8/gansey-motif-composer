@@ -116,6 +116,7 @@ function renderProjectOverview(){
   card.onclick=()=>activatePanelFromProject(panelName);
   host.appendChild(card);
  });
+ if(typeof renderGarmentAssembly==="function")renderGarmentAssembly();
 }
 
 $("copyPanelButton").onclick=()=>{

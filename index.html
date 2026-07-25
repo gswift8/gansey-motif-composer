@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.13.0</title>
+<title>Gansey Studio v0.14.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Layout Workspace v0.13.0</div>
+  <div class="badge">Garment Assembly v0.14.0</div>
 </header>
 
 <main>
@@ -223,6 +223,35 @@
     <div id="projectPanelOverview" class="project-panel-overview"></div>
   </div>
 
+
+  <div class="card" id="assemblyCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">6. Garment assembly</h2>
+        <p class="small" style="margin:5px 0 0">See how the project panels relate to one another and jump directly into any panel.</p>
+      </div>
+      <div class="assembly-view-controls">
+        <label>View
+          <select id="assemblyView">
+            <option value="garment">Garment map</option>
+            <option value="exploded">Exploded panels</option>
+          </select>
+        </label>
+        <label>Preview size
+          <input id="assemblyScale" type="range" min="70" max="150" step="10" value="100">
+        </label>
+        <label class="assembly-checkbox"><input id="assemblyShowEmpty" type="checkbox" checked> Show empty panels</label>
+      </div>
+    </div>
+
+    <div id="assemblyMetrics" class="assembly-metrics"></div>
+    <div id="garmentAssembly" class="garment-assembly garment-view"></div>
+
+    <div class="assembly-note small">
+      The assembly map is a planning schematic rather than a shaped knitting pattern. Panel previews use the current chart data and target stitch count.
+    </div>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -244,6 +273,7 @@
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>
+<script defer src="js/assembly.js"></script>
 <script defer src="js/app.js"></script>
 
 </body>
