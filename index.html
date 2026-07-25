@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.15.0</title>
+<title>Gansey Studio v0.16.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Gauge & Measurements v0.15.0</div>
+  <div class="badge">Panel Specifications v0.16.0</div>
 </header>
 
 <main>
@@ -303,6 +303,31 @@
     </p>
   </div>
 
+
+  <div class="card" id="panelSpecificationsCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">8. Panel specifications</h2>
+        <p class="small" style="margin:5px 0 0">Give each chart construction details, repeat rules, visual guides, and design notes.</p>
+      </div>
+      <button type="button" class="ghost" id="applyActiveSpecWidth">Use active working count as chart width</button>
+    </div>
+
+    <div class="spec-panel-tabs" id="specPanelTabs"></div>
+    <div id="panelSpecEditor"></div>
+
+    <div class="spec-dashboard">
+      <div class="spec-dashboard-header">
+        <div>
+          <strong>Project dashboard</strong>
+          <div class="small">Chart size and specification status for every panel.</div>
+        </div>
+      </div>
+      <div id="specProjectDashboard" class="spec-project-dashboard"></div>
+      <div id="specProjectTotals" class="spec-project-totals"></div>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -321,6 +346,7 @@
 <script defer src="js/editor.js"></script>
 <script defer src="js/renderer.js"></script>
 <script defer src="js/composer.js"></script>
+<script defer src="js/panel-specs.js"></script>
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>

@@ -7,14 +7,50 @@ function renderChart(){
  $("totalHeight").textContent=`${totalH} rows`;
  const p=$("chartPreview");p.innerHTML="";
  if(!all.length){p.innerHTML='<div class="empty">The assembled section chart will appear here.</div>';return}
+
+ const spec=typeof panelSpecs!=="undefined"?(ensurePanelSpecs(),panelSpecs[activePanel]):null;
+ const guideClassAt=column=>{
+  const classes=[];
+  if(spec?.guideSideSeams&&(column===0||column===target-1))classes.push("guide-side");
+  if(spec?.guideCenter){
+   if(spec.centerMode==="stitch"&&column===Math.floor(target/2))classes.push("guide-center");
+   if(spec.centerMode!=="stitch"&&column===Math.floor(target/2)-1)classes.push("guide-center-left");
+  }
+  if(spec?.guideQuarters&&(column===Math.floor(target/4)-1||column===Math.floor(target*3/4)-1))classes.push("guide-quarter");
+  const repeat=Math.max(1,+spec?.repeatMultiple||1);
+  const selvage=Math.max(0,+spec?.selvage||0);
+  if(spec?.guideRepeats&&column>=selvage&&(column-selvage)%repeat===0)classes.push("guide-repeat");
+  if(spec?.guideUnderarm){
+   const underarm=Math.max(0,+spec.underarm||0);
+   if(underarm&&[underarm-1,target-underarm-1].includes(column))classes.push("guide-underarm");
+  }
+  return classes.join(" ");
+ };
+
  all.forEach((entry,index)=>{
   const label=document.createElement("div");label.className="chart-section-label";
   label.textContent=`${index+1}. ${entry.section.name} · ${entry.rows.length} rows`;
   p.appendChild(label);
+
+  const ruler=document.createElement("div");
+  ruler.className="chart-ruler";
+  ruler.style.gridTemplateColumns=`repeat(${target},19px)`;
+  for(let c=0;c<target;c++){
+   const mark=document.createElement("div");
+   mark.className="chart-ruler-cell "+guideClassAt(c);
+   if(c===0||((c+1)%10===0)||c===target-1)mark.textContent=c+1;
+   ruler.appendChild(mark);
+  }
+  p.appendChild(ruler);
+
   const grid=document.createElement("div");grid.className="composed-grid";grid.style.gridTemplateColumns=`repeat(${target},19px)`;
   entry.rows.forEach(row=>{
    const normalized=[...row.slice(0,target),...Array(Math.max(0,target-row.length)).fill(K)].slice(0,target);
-   normalized.forEach(v=>{const c=document.createElement("div");c.className="composed-cell "+v;grid.appendChild(c)})
+   normalized.forEach((v,column)=>{
+    const c=document.createElement("div");
+    c.className="composed-cell "+v+" "+guideClassAt(column);
+    grid.appendChild(c);
+   });
   });
   p.appendChild(grid);
   if(index<all.length-1){const d=document.createElement("div");d.className="chart-section-divider";p.appendChild(d)}

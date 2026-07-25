@@ -1,42 +1,42 @@
-# Gansey Studio v0.15.0 — Gauge & Measurements Phase
+# Gansey Studio v0.16.0 — Panel Specifications
 
-This release translates chart dimensions into approximate finished measurements.
+This release adds construction metadata and chart validation for every garment panel.
 
-## Gauge inputs
+## Panel specifications
 
-Enter:
+Front, Back, Sleeve, Gusset, and Shoulder each store:
 
-- stitches in a swatch
-- swatch width
-- rows in a swatch
-- swatch height
+- description
+- cast-on, working, and finished stitch counts
+- repeat multiple
+- selvage stitches
+- underarm stitches
+- center alignment
+- flat or in-the-round construction
+- mirror and shoulder-shaping flags
+- panel-specific notes
 
-The app calculates stitch gauge and row gauge automatically.
+## Live validation
 
-## Panel measurements
+Gansey Studio checks whether the usable working stitches divide evenly by the
+repeat multiple and whether the selected center alignment matches an odd or even
+stitch count. It suggests nearby divisible counts when needed.
 
-Each garment panel now shows:
+## Chart guides
 
-- chart stitch count
-- chart row count
-- approximate finished width
-- approximate finished height
+Optional visual overlays are available for:
 
-Click a measurement card to open that panel in Section 3.
+- center line
+- quarter marks
+- repeat boundaries
+- underarm markers
+- side seams
 
-## Unit support
+A numbered stitch ruler is displayed above every chart section.
 
-Switch between inches and centimeters without changing the saved swatch values.
+## Project dashboard
 
-## Project estimates
+The dashboard summarizes each panel's specified width, chart height, validation
+status, total specified working stitches, chart rows, and chart cells.
 
-The new section also estimates:
-
-- front plus back circumference
-- one sleeve chart width
-- front chart height
-
-These estimates do not yet account for garment shaping, ease, blocking, seams, or
-stitch-pattern contraction.
-
-Existing v0.14 and earlier browser saves remain loadable.
+Existing v0.15 and earlier browser saves remain loadable.
