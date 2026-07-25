@@ -7,3 +7,5 @@ updateHistoryUI();
 loadExternalLibrary(true);
 if(typeof renderProjectOverview==="function")renderProjectOverview();
 if(typeof renderGarmentAssembly==="function")renderGarmentAssembly();
+
+if(typeof renderMeasurements==="function")renderMeasurements();

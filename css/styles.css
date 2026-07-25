@@ -639,3 +639,103 @@ button:hover{transform:translateY(-1px)}
      "shoulder-right";
   }
 }
+
+
+/* v0.15 gauge and measurements */
+.measurement-unit-toggle{
+  display:flex;
+  gap:6px;
+}
+.measurement-unit-toggle button.active{
+  border-color:var(--peri);
+  background:#eceaff;
+}
+.gauge-input-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(130px,1fr));
+  gap:10px;
+  margin:16px 0 10px;
+}
+.gauge-input-grid label{
+  display:grid;
+  gap:5px;
+  min-width:0;
+  font-size:.7rem;
+  font-weight:800;
+  color:var(--muted);
+}
+.gauge-input-grid input{min-width:0;width:100%}
+
+.gauge-summary{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(150px,1fr));
+  gap:9px;
+  margin-bottom:12px;
+}
+.gauge-summary div,
+.measurement-estimates div{
+  display:grid;
+  gap:3px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f7f6ff;
+}
+.gauge-summary span,
+.measurement-estimates span{
+  font-size:.68rem;
+  color:var(--muted);
+}
+.gauge-summary strong,
+.measurement-estimates strong{font-size:.92rem}
+
+.panel-measurements{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+.panel-measurement-card{
+  display:grid;
+  gap:8px;
+  padding:11px;
+  color:inherit;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:rgba(255,255,255,.9);
+}
+.panel-measurement-card:hover{
+  border-color:var(--peri);
+  transform:translateY(-1px);
+}
+.panel-measurement-heading{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:baseline;
+}
+.panel-measurement-heading span{
+  font-size:.62rem;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.panel-measurement-size{
+  display:grid;
+  gap:3px;
+  font-size:.76rem;
+}
+.measurement-estimates{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(150px,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+.measurement-disclaimer{margin:10px 0 0}
+
+@media(max-width:800px){
+  .gauge-input-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}
+  .measurement-estimates{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .gauge-input-grid,.gauge-summary{grid-template-columns:1fr}
+}

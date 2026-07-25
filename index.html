@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.14.0</title>
+<title>Gansey Studio v0.15.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Garment Assembly v0.14.0</div>
+  <div class="badge">Gauge & Measurements v0.15.0</div>
 </header>
 
 <main>
@@ -252,6 +252,57 @@
     </div>
   </div>
 
+
+  <div class="card" id="measurementsCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">7. Gauge & measurements</h2>
+        <p class="small" style="margin:5px 0 0">Translate chart stitches and rows into approximate finished dimensions.</p>
+      </div>
+      <div class="measurement-unit-toggle">
+        <button type="button" class="ghost active" data-measure-unit="in">Inches</button>
+        <button type="button" class="ghost" data-measure-unit="cm">Centimeters</button>
+      </div>
+    </div>
+
+    <div class="gauge-input-grid">
+      <label>Stitches in swatch
+        <input id="gaugeStitches" type="number" min="1" step="0.1" value="24">
+      </label>
+      <label>Swatch width
+        <input id="gaugeWidth" type="number" min="0.1" step="0.1" value="4">
+      </label>
+      <label>Rows in swatch
+        <input id="gaugeRows" type="number" min="1" step="0.1" value="32">
+      </label>
+      <label>Swatch height
+        <input id="gaugeHeight" type="number" min="0.1" step="0.1" value="4">
+      </label>
+    </div>
+
+    <div id="gaugeSummary" class="gauge-summary"></div>
+    <div id="panelMeasurements" class="panel-measurements"></div>
+
+    <div class="measurement-estimates">
+      <div>
+        <span>Front + back circumference</span>
+        <strong id="bodyCircumferenceEstimate">—</strong>
+      </div>
+      <div>
+        <span>One sleeve chart width</span>
+        <strong id="sleeveWidthEstimate">—</strong>
+      </div>
+      <div>
+        <span>Front chart height</span>
+        <strong id="frontHeightEstimate">—</strong>
+      </div>
+    </div>
+
+    <p class="small measurement-disclaimer">
+      These are chart-based estimates before blocking and do not include shaping, seam allowances, ease, or stitch-pattern contraction.
+    </p>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -274,6 +325,7 @@
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>
 <script defer src="js/assembly.js"></script>
+<script defer src="js/measurements.js"></script>
 <script defer src="js/app.js"></script>
 
 </body>

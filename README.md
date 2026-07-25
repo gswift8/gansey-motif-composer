@@ -1,43 +1,42 @@
-# Gansey Studio v0.14.0 — Garment Assembly Phase
+# Gansey Studio v0.15.0 — Gauge & Measurements Phase
 
-This release adds a new garment-level planning view.
+This release translates chart dimensions into approximate finished measurements.
 
-## Garment assembly
+## Gauge inputs
 
-Section 6 shows the Front, Back, Sleeves, Gussets, and Shoulders together.
+Enter:
 
-Two views are available:
+- stitches in a swatch
+- swatch width
+- rows in a swatch
+- swatch height
 
-- Garment map — places the panels in a sweater-like schematic
-- Exploded panels — displays every panel in a regular comparison grid
+The app calculates stitch gauge and row gauge automatically.
 
-Each assembly preview:
+## Panel measurements
 
-- is generated from the current chart data
-- shows stitch width and row height
-- can be clicked to open that panel in Section 3
-- updates whenever the project changes
+Each garment panel now shows:
 
-## Assembly controls
+- chart stitch count
+- chart row count
+- approximate finished width
+- approximate finished height
 
-- Preview size slider
-- Show or hide empty panels
-- Saved view preferences in exported JSON and browser saves
+Click a measurement card to open that panel in Section 3.
 
-## Project metrics
+## Unit support
 
-The assembly section also reports:
+Switch between inches and centimeters without changing the saved swatch values.
 
-- current target stitch width
-- number of panels with chart data
-- total designed rows
-- total chart cells
+## Project estimates
 
-The assembly is a planning schematic. It does not yet calculate garment shaping,
-armhole curves, sleeve caps, or finished measurements.
+The new section also estimates:
 
-## GitHub update
+- front plus back circumference
+- one sleeve chart width
+- front chart height
 
-Extract the ZIP and upload everything inside the release folder to the repository
-root using **Add file → Upload files**. Allow GitHub to replace matching files and
-keep the `css/` and `js/` folders intact.
+These estimates do not yet account for garment shaping, ease, blocking, seams, or
+stitch-pattern contraction.
+
+Existing v0.14 and earlier browser saves remain loadable.

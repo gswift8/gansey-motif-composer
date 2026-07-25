@@ -117,6 +117,7 @@ function renderProjectOverview(){
   host.appendChild(card);
  });
  if(typeof renderGarmentAssembly==="function")renderGarmentAssembly();
+ if(typeof renderMeasurements==="function")renderMeasurements();
 }
 
 $("copyPanelButton").onclick=()=>{

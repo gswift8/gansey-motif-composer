@@ -23,7 +23,7 @@ $("reloadLibrary").onclick=()=>{
  if(confirm("Reset the current motif library to the hosted motifs.json file? Any unsaved imported or edited library changes will be discarded."))loadExternalLibrary(true);
 };
 
-function project(){return {version:14,projectName:$("projectName")?.value||"Untitled Gansey",motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId,assembly:typeof assemblySettings==="function"?assemblySettings():null}}
+function project(){return {version:15,projectName:$("projectName")?.value||"Untitled Gansey",motifs,panels,targetWidth:+$("targetWidth").value,activePanel,selectedSectionId,assembly:typeof assemblySettings==="function"?assemblySettings():null,measurements:typeof measurementSettings==="function"?measurementSettings():null}}
 function restore(p){
  motifs=p.motifs||motifs;
  panels=p.panels||panels;
@@ -36,6 +36,13 @@ function restore(p){
   if($("assemblyScale"))$("assemblyScale").value=p.assembly.scale||100;
   if($("assemblyShowEmpty"))$("assemblyShowEmpty").checked=p.assembly.showEmpty!==false;
  }
+ if(p.measurements){
+  measurementUnit=p.measurements.unit||"in";
+  if($("gaugeStitches"))$("gaugeStitches").value=p.measurements.stitches||24;
+  if($("gaugeWidth"))$("gaugeWidth").value=p.measurements.swatchWidth||4;
+  if($("gaugeRows"))$("gaugeRows").value=p.measurements.rows||32;
+  if($("gaugeHeight"))$("gaugeHeight").value=p.measurements.swatchHeight||4;
+ }
  ensureSections();
  selectedMotifId=null;
  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("active",x.dataset.panel===activePanel));
@@ -43,7 +50,7 @@ function restore(p){
 }
 $("exportJson").onclick=()=>{
  const blob=new Blob([JSON.stringify(project(),null,2)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.14.0.json";a.click();URL.revokeObjectURL(a.href)
+ a.href=URL.createObjectURL(blob);a.download="gansey-studio-project-v0.15.0.json";a.click();URL.revokeObjectURL(a.href)
 };
 $("importJsonButton").onclick=()=>$("importJson").click();
 $("importJson").onchange=e=>{
@@ -51,9 +58,9 @@ $("importJson").onchange=e=>{
  r.onload=()=>{try{restore(JSON.parse(r.result))}catch(error){alert("That JSON file could not be read.")}};
  r.readAsText(f)
 };
-$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV140",JSON.stringify(project()));alert("Project saved in this browser.")};
+$("saveLocal").onclick=()=>{localStorage.setItem("ganseyStudioV150",JSON.stringify(project()));alert("Project saved in this browser.")};
 $("loadLocal").onclick=()=>{
- const raw=localStorage.getItem("ganseyStudioV140")||localStorage.getItem("ganseyStudioV130")||localStorage.getItem("ganseyStudioV120")||localStorage.getItem("ganseyStudioV111")||localStorage.getItem("ganseyStudioV110")||localStorage.getItem("ganseyStudioV100")||localStorage.getItem("ganseyStudioV94")||localStorage.getItem("ganseyStudioV93")||localStorage.getItem("ganseyStudioV92")||localStorage.getItem("ganseyStudioV91")||localStorage.getItem("ganseyStudioV90")||localStorage.getItem("ganseyStudioV84")||localStorage.getItem("ganseyStudioV83")||localStorage.getItem("ganseyStudioV82")||localStorage.getItem("ganseyStudioV81")||localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
+ const raw=localStorage.getItem("ganseyStudioV150")||localStorage.getItem("ganseyStudioV140")||localStorage.getItem("ganseyStudioV130")||localStorage.getItem("ganseyStudioV120")||localStorage.getItem("ganseyStudioV111")||localStorage.getItem("ganseyStudioV110")||localStorage.getItem("ganseyStudioV100")||localStorage.getItem("ganseyStudioV94")||localStorage.getItem("ganseyStudioV93")||localStorage.getItem("ganseyStudioV92")||localStorage.getItem("ganseyStudioV91")||localStorage.getItem("ganseyStudioV90")||localStorage.getItem("ganseyStudioV84")||localStorage.getItem("ganseyStudioV83")||localStorage.getItem("ganseyStudioV82")||localStorage.getItem("ganseyStudioV81")||localStorage.getItem("ganseyStudioV8")||localStorage.getItem("ganseyStudioV7")||localStorage.getItem("ganseyStudioV4")||localStorage.getItem("ganseyComposerV2");
  raw?restore(JSON.parse(raw)):alert("No saved project found.")
 };
 
