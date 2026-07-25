@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.16.0</title>
+<title>Gansey Studio v0.17.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Panel Specifications v0.16.0</div>
+  <div class="badge">Smart Repeat & Alignment v0.17.0</div>
 </header>
 
 <main>
@@ -328,6 +328,32 @@
     </div>
   </div>
 
+
+  <div class="card" id="smartLayoutCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">9. Smart repeat & alignment</h2>
+        <p class="small" style="margin:5px 0 0">Analyze the active panel, resolve leftover stitches, and center bands without rebuilding them manually.</p>
+      </div>
+      <button type="button" class="ghost" id="refreshSmartLayout">Refresh analysis</button>
+    </div>
+
+    <div id="smartLayoutSummary" class="smart-layout-summary"></div>
+
+    <div class="smart-global-actions">
+      <button type="button" id="smartCenterAll">Center all horizontal bands</button>
+      <button type="button" id="smartFitAllFields">Fit all vertical bands with edge spacers</button>
+      <button type="button" class="ghost" id="smartWidthLower">Use nearest lower valid width</button>
+      <button type="button" class="ghost" id="smartWidthUpper">Use nearest higher valid width</button>
+    </div>
+
+    <div id="smartSectionAnalysis" class="smart-section-analysis"></div>
+
+    <p class="small smart-layout-note">
+      Smart actions preserve motif charts. They adjust repeat counts, section alignment, or knit edge spacers and are included in Undo history.
+    </p>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -347,6 +373,7 @@
 <script defer src="js/renderer.js"></script>
 <script defer src="js/composer.js"></script>
 <script defer src="js/panel-specs.js"></script>
+<script defer src="js/smart-layout.js"></script>
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>

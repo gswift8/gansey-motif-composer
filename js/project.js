@@ -119,6 +119,7 @@ function renderProjectOverview(){
  if(typeof renderGarmentAssembly==="function")renderGarmentAssembly();
  if(typeof renderMeasurements==="function")renderMeasurements();
  if(typeof renderPanelSpecifications==="function")renderPanelSpecifications();
+ if(typeof renderSmartLayout==="function")renderSmartLayout();
 }
 
 $("copyPanelButton").onclick=()=>{

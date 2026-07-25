@@ -1,42 +1,35 @@
-# Gansey Studio v0.16.0 — Panel Specifications
+# Gansey Studio v0.17.0 — Smart Repeat & Alignment
 
-This release adds construction metadata and chart validation for every garment panel.
+This release adds automated layout assistance for the active garment panel.
 
-## Panel specifications
+## Active-panel analysis
 
-Front, Back, Sleeve, Gusset, and Shoulder each store:
+Every vertical band, horizontal band, and divider is checked against the panel's
+working stitch count. Gansey Studio reports exact fits, leftover stitches, and
+sections that are too wide.
 
-- description
-- cast-on, working, and finished stitch counts
-- repeat multiple
-- selvage stitches
-- underarm stitches
-- center alignment
-- flat or in-the-round construction
-- mirror and shoulder-shaping flags
-- panel-specific notes
+## Smart actions
 
-## Live validation
+### Vertical bands
 
-Gansey Studio checks whether the usable working stitches divide evenly by the
-repeat multiple and whether the selected center alignment matches an odd or even
-stitch count. It suggests nearby divisible counts when needed.
+- Fit with balanced knit edge spacers
+- Reduce available horizontal repeats when a band is too wide
+- Auto-repeat a single motif as many times as possible
+- Add balanced edge spacers after auto-repeat
 
-## Chart guides
+### Horizontal bands
 
-Optional visual overlays are available for:
+- Center complete repeat units
+- Align repeat units to the left
+- Center all horizontal bands in one action
 
-- center line
-- quarter marks
-- repeat boundaries
-- underarm markers
-- side seams
+### Panel width
 
-A numbered stitch ruler is displayed above every chart section.
+Use the nearest lower or higher width compatible with the panel's repeat multiple
+and selvage specification.
 
-## Project dashboard
+## Undo support
 
-The dashboard summarizes each panel's specified width, chart height, validation
-status, total specified working stitches, chart rows, and chart cells.
+Every smart mutation is captured in the existing Undo history.
 
-Existing v0.15 and earlier browser saves remain loadable.
+Existing v0.16 and earlier browser saves remain loadable.
