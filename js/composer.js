@@ -1,3 +1,5 @@
+const collapsedTreeSections=new Set();
+
 function control(label,html){return `<label>${label}${html}</label>`}
 
 function renderBandItems(section,host){
@@ -122,21 +124,89 @@ function renderLayoutTree(){
  const tree=$("layoutTree");if(!tree)return;
  tree.innerHTML="";
  ensureSections();
+
  panels[activePanel].forEach((section,si)=>{
-  const row=document.createElement("div");row.className="tree-section"+(section.id===selectedSectionId?" active":"");
-  row.innerHTML=`<span class="tree-icon">${section.type==="field"?"↕":section.type==="band"?"↔":"—"}</span><span>${si+1}. ${section.name}</span><span class="small">${sectionHeight(section)} rows</span>`;
-  row.onclick=()=>{selectedSectionId=section.id;renderPanel()};tree.appendChild(row);
-  (section.items||[]).forEach((item,bi)=>{
-   const block=document.createElement("div");block.className="tree-block";
-   const m=item.type==="motif"?motifs.find(x=>x.id===item.motifId):null;
-   block.innerHTML=`<span class="tree-icon">${item.type==="spacer"?"□":"◆"}</span><span>${m?.name||(item.stitch===P?"Purl spacer":"Knit spacer")}</span><span class="small">${itemWidth(item)} sts</span>`;
-   block.onclick=()=>{selectedSectionId=section.id;renderPanel();setTimeout(()=>document.querySelectorAll(".section-card")[si]?.scrollIntoView({behavior:"smooth",block:"start"}),0)};
-   tree.appendChild(block);
-  });
+  const group=document.createElement("div");
+  group.className="tree-section-group";
+  group.dataset.sectionId=section.id;
+
+  const row=document.createElement("div");
+  row.className="tree-section"+(section.id===selectedSectionId?" active":"");
+
+  const hasChildren=Array.isArray(section.items)&&section.items.length>0;
+  const collapsed=collapsedTreeSections.has(section.id);
+  const toggle=document.createElement("button");
+  toggle.type="button";
+  toggle.className="tree-toggle";
+  toggle.disabled=!hasChildren;
+  toggle.title=hasChildren?(collapsed?"Expand band":"Collapse band"):"This section has no motif blocks";
+  toggle.setAttribute("aria-expanded",String(hasChildren&&!collapsed));
+  toggle.textContent=hasChildren?(collapsed?"▸":"▾"):"•";
+  toggle.onclick=e=>{
+   e.preventDefault();
+   e.stopPropagation();
+   if(!hasChildren)return;
+   if(collapsedTreeSections.has(section.id))collapsedTreeSections.delete(section.id);
+   else collapsedTreeSections.add(section.id);
+   renderLayoutTree();
+  };
+
+  const icon=document.createElement("span");
+  icon.className="tree-icon";
+  icon.textContent=section.type==="field"?"↕":section.type==="band"?"↔":"—";
+
+  const name=document.createElement("span");
+  name.className="tree-section-name";
+  name.textContent=`${si+1}. ${section.name}`;
+
+  const rows=document.createElement("span");
+  rows.className="small tree-section-rows";
+  rows.textContent=`${sectionHeight(section)} rows`;
+
+  row.append(toggle,icon,name,rows);
+  row.onclick=()=>{selectedSectionId=section.id;renderPanel()};
+  group.appendChild(row);
+
+  if(hasChildren&&!collapsed){
+   const children=document.createElement("div");
+   children.className="tree-children";
+   section.items.forEach(item=>{
+    const block=document.createElement("div");
+    block.className="tree-block";
+    const m=item.type==="motif"?motifs.find(x=>x.id===item.motifId):null;
+
+    const blockIcon=document.createElement("span");
+    blockIcon.className="tree-icon";
+    blockIcon.textContent=item.type==="spacer"?"□":"◆";
+
+    const blockName=document.createElement("span");
+    blockName.className="tree-block-name";
+    blockName.textContent=m?.name||(item.stitch===P?"Purl spacer":"Knit spacer");
+
+    const width=document.createElement("span");
+    width.className="small tree-block-width";
+    width.textContent=`${itemWidth(item)} sts`;
+
+    block.append(blockIcon,blockName,width);
+    block.onclick=()=>{
+     selectedSectionId=section.id;
+     renderPanel();
+     setTimeout(()=>{
+      document.querySelector(`.section-card[data-section-id="${section.id}"]`)?.scrollIntoView({
+       behavior:"smooth",block:"nearest",inline:"nearest"
+      });
+     },0);
+    };
+    children.appendChild(block);
+   });
+   group.appendChild(children);
+  }
+
+  tree.appendChild(group);
  });
+
  if(!tree.children.length)tree.innerHTML='<div class="small">No sections yet.</div>';
 }
-
 
 $("sectionStack").addEventListener("click",e=>{
  const button=e.target.closest("button[data-add-spacer]");
@@ -423,3 +493,17 @@ function setupComposerWorkspaceScroll(){
  },{passive:false});
 }
 setupComposerWorkspaceScroll();
+
+
+$("collapseAllTree").onclick=()=>{
+ ensureSections();
+ panels[activePanel].forEach(section=>{
+  if(Array.isArray(section.items)&&section.items.length)collapsedTreeSections.add(section.id);
+ });
+ renderLayoutTree();
+};
+
+$("expandAllTree").onclick=()=>{
+ collapsedTreeSections.clear();
+ renderLayoutTree();
+};

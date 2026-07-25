@@ -1,47 +1,29 @@
-# Gansey Studio v0.12.0 — Project Builder Phase
+# Gansey Studio v0.13.0 — Layout Workspace Phase
 
-This release begins the project-builder phase.
+This phase focuses on keeping large projects comfortable to navigate.
 
-## New Project Builder
+## Layout tree
 
-A new Section 5 gives you a complete view of the garment project:
+- The Layout Tree now has a bounded height and its own vertical scrollbar.
+- Bands with motif or spacer blocks can be expanded and collapsed.
+- Collapse All and Expand All controls are included.
+- Long band and motif names are truncated instead of widening the panel.
 
-- Front
-- Back
-- Sleeve
-- Gusset
-- Shoulder
+## Section Composer
 
-Each panel card shows:
+- Section 3 now has a bounded working height and scrolls vertically as sections
+  and motif blocks are added.
+- Horizontal scrolling remains available.
+- Band name, height, fixed-row, and other settings stay within a controlled width
+  instead of stretching with a long motif strip.
 
-- a miniature chart preview
-- section count
-- motif-block count
-- total row count
-- which panel is currently active
+## Project data
 
-Click any panel card to open that panel in Section 3.
+- Import JSON is now a standard button matching the other Project Data buttons.
+- Existing v0.12 and earlier browser saves remain loadable.
 
-## Copy and mirror panels
+## GitHub update
 
-The active panel can now be copied to another panel.
-
-Copy styles:
-
-- Exact copy
-- Mirrored copy
-
-A mirrored copy reverses the motif-block order, flips motif mirroring, reverses stitch
-offset direction, and reverses a horizontal band's custom offset direction.
-
-The app asks before replacing a destination panel that already contains sections.
-
-## Project names
-
-Projects now have a name. The name is included in exported JSON files and browser saves.
-
-## Updating through GitHub's website
-
-Extract the ZIP. In the repository, choose **Add file → Upload files** and upload
-everything inside the extracted folder. Allow GitHub to replace matching files,
-then commit the upload. Keep the `css/` and `js/` folders intact.
+Extract the ZIP and upload everything inside the release folder to the repository
+root using **Add file → Upload files**. Allow GitHub to replace matching files and
+keep the `css/` and `js/` folders intact.

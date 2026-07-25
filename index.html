@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.12.0</title>
+<title>Gansey Studio v0.13.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Project Builder v0.12.0</div>
+  <div class="badge">Layout Workspace v0.13.0</div>
 </header>
 
 <main>
@@ -139,9 +139,15 @@
     <div class="small">Select a band before adding motifs or spacers. Both band types accept the same draggable blocks; their renderers interpret those blocks differently.</div>
 
     <div class="layout-tree-card">
-      <div class="row" style="justify-content:space-between">
-        <strong>Layout tree</strong>
-        <span class="small">Click a band or block to select it.</span>
+      <div class="layout-tree-header">
+        <div>
+          <strong>Layout tree</strong>
+          <div class="small">Click a band or block to select it.</div>
+        </div>
+        <div class="row">
+          <button type="button" class="ghost compact-button" id="collapseAllTree">Collapse all</button>
+          <button type="button" class="ghost compact-button" id="expandAllTree">Expand all</button>
+        </div>
       </div>
       <div id="layoutTree" class="layout-tree"></div>
     </div>
@@ -221,9 +227,8 @@
     <h2>Project data</h2>
     <div class="io">
       <button class="ghost" id="exportJson">Export JSON</button>
-      <label class="ghost" style="padding:9px 12px;border-radius:12px;cursor:pointer">
-        Import JSON<input id="importJson" type="file" accept=".json" hidden>
-      </label>
+      <button class="ghost" type="button" id="importJsonButton">Import JSON</button>
+      <input id="importJson" type="file" accept=".json" hidden>
       <button class="ghost" id="saveLocal">Save in browser</button>
       <button class="ghost" id="loadLocal">Load saved project</button>
     </div>
