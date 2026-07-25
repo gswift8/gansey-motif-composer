@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.11.0</title>
+<title>Gansey Studio v0.11.1</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Workspace Navigation v0.11.0</div>
+  <div class="badge">Workspace Navigation v0.11.1</div>
 </header>
 
 <main>
@@ -146,7 +146,19 @@
       <div id="layoutTree" class="layout-tree"></div>
     </div>
 
-    <div id="composerStatus" class="small" style="margin:8px 0"></div><div id="sectionStack" class="section-stack"></div>
+    <div id="composerStatus" class="small" style="margin:8px 0"></div>
+    <div class="composer-scroll-controls">
+      <span class="small">Scroll across Section 3</span>
+      <div class="row">
+        <button type="button" class="ghost" id="composerScrollStart" title="Scroll to the far left">⇤</button>
+        <button type="button" class="ghost" id="composerScrollLeft" title="Scroll left">←</button>
+        <button type="button" class="ghost" id="composerScrollRight" title="Scroll right">→</button>
+        <button type="button" class="ghost" id="composerScrollEnd" title="Scroll to the far right">⇥</button>
+      </div>
+    </div>
+    <div id="sectionComposerScroll" class="section-composer-scroll">
+      <div id="sectionStack" class="section-stack"></div>
+    </div>
 
     <div class="row" style="justify-content:space-between;margin-top:12px">
       <div class="canvas-info">

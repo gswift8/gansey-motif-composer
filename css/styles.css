@@ -176,3 +176,68 @@ button:hover{transform:translateY(-1px)}
   .panel-scroll-buttons{width:100%;justify-content:space-between}
   .panel-scroll-position{min-width:70px}
 }
+
+
+/* v0.11.1 — the entire Section 3 workspace is the horizontal scroll region */
+.composer-scroll-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:8px 0 4px;
+  padding:7px 9px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f7f6ff;
+}
+.composer-scroll-controls button{padding:5px 9px}
+
+.section-composer-scroll{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  padding:3px 3px 14px;
+  scrollbar-gutter:stable;
+  overscroll-behavior-x:contain;
+  scroll-behavior:smooth;
+}
+.section-composer-scroll::-webkit-scrollbar{height:16px}
+.section-composer-scroll::-webkit-scrollbar-track{
+  background:#eceaff;
+  border-radius:999px;
+}
+.section-composer-scroll::-webkit-scrollbar-thumb{
+  background:#8f95df;
+  border:3px solid #eceaff;
+  border-radius:999px;
+}
+.section-composer-scroll::-webkit-scrollbar-thumb:hover{background:#737ad2}
+
+.section-composer-scroll .section-stack{
+  width:max-content;
+  min-width:100%;
+}
+.section-composer-scroll .section-card{
+  width:max-content;
+  min-width:100%;
+  max-width:none;
+}
+.section-composer-scroll .panel-scroll-shell{
+  width:max-content;
+  max-width:none;
+  overflow:visible;
+}
+.section-composer-scroll .panel-scroll-shell .panel-list{
+  width:max-content;
+  max-width:none;
+  overflow:visible;
+}
+.section-composer-scroll .panel-scroll-nav{
+  position:sticky;
+  left:0;
+  width:min(100%,760px);
+}
+
+/* The outer Section 3 scrollbar now handles navigation. */
+.section-composer-scroll .panel-scroll-position{display:none}

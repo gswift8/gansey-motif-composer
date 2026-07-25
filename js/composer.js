@@ -35,7 +35,7 @@ function renderBandItems(section,host){
    selectedSectionId=section.id;
    renderPanel();
    requestAnimationFrame(()=>{
-    const active=document.querySelector(`.section-card[data-section-id="${section.id}"] .panel-list`);
+    const active=$("sectionComposerScroll");
     if(active)active.scrollLeft=active.scrollWidth;
    });
   }
@@ -83,9 +83,11 @@ function renderBandItems(section,host){
   list.appendChild(block);
  });
  const position=nav.querySelector(".panel-scroll-position");
+ const outerScroll=$("sectionComposerScroll");
+ const scrollTarget=outerScroll||list;
  const updateScrollControls=()=>{
-  const max=Math.max(0,list.scrollWidth-list.clientWidth);
-  const current=Math.max(0,Math.min(max,list.scrollLeft));
+  const max=Math.max(0,scrollTarget.scrollWidth-scrollTarget.clientWidth);
+  const current=Math.max(0,Math.min(max,scrollTarget.scrollLeft));
   const overflow=max>2;
   nav.querySelector(".scroll-start").disabled=!overflow||current<=1;
   nav.querySelector(".scroll-left").disabled=!overflow||current<=1;
@@ -94,22 +96,13 @@ function renderBandItems(section,host){
   position.textContent=overflow?`${Math.round(current)} / ${Math.round(max)} px`:"All elements visible";
  };
 
- const scrollAmount=()=>Math.max(240,Math.round(list.clientWidth*.72));
- nav.querySelector(".scroll-start").onclick=()=>list.scrollTo({left:0,behavior:"smooth"});
- nav.querySelector(".scroll-left").onclick=()=>list.scrollBy({left:-scrollAmount(),behavior:"smooth"});
- nav.querySelector(".scroll-right").onclick=()=>list.scrollBy({left:scrollAmount(),behavior:"smooth"});
- nav.querySelector(".scroll-end").onclick=()=>list.scrollTo({left:list.scrollWidth,behavior:"smooth"});
+ const scrollAmount=()=>Math.max(280,Math.round(scrollTarget.clientWidth*.72));
+ nav.querySelector(".scroll-start").onclick=()=>scrollTarget.scrollTo({left:0,behavior:"smooth"});
+ nav.querySelector(".scroll-left").onclick=()=>scrollTarget.scrollBy({left:-scrollAmount(),behavior:"smooth"});
+ nav.querySelector(".scroll-right").onclick=()=>scrollTarget.scrollBy({left:scrollAmount(),behavior:"smooth"});
+ nav.querySelector(".scroll-end").onclick=()=>scrollTarget.scrollTo({left:scrollTarget.scrollWidth,behavior:"smooth"});
 
- list.addEventListener("scroll",updateScrollControls,{passive:true});
- list.addEventListener("wheel",e=>{
-  if(list.scrollWidth<=list.clientWidth)return;
-  const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
-  const max=list.scrollWidth-list.clientWidth;
-  const canMove=(delta<0&&list.scrollLeft>0)||(delta>0&&list.scrollLeft<max-1);
-  if(!canMove)return;
-  e.preventDefault();
-  list.scrollLeft+=delta;
- },{passive:false});
+ scrollTarget.addEventListener("scroll",updateScrollControls,{passive:true});
 
  scroller.append(nav,list);
  host.appendChild(scroller);
@@ -407,3 +400,25 @@ document.addEventListener("keydown",e=>{
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo()}
 });
 
+
+
+function setupComposerWorkspaceScroll(){
+ const scroller=$("sectionComposerScroll");
+ if(!scroller)return;
+ const amount=()=>Math.max(300,Math.round(scroller.clientWidth*.75));
+ $("composerScrollStart").onclick=()=>scroller.scrollTo({left:0,behavior:"smooth"});
+ $("composerScrollLeft").onclick=()=>scroller.scrollBy({left:-amount(),behavior:"smooth"});
+ $("composerScrollRight").onclick=()=>scroller.scrollBy({left:amount(),behavior:"smooth"});
+ $("composerScrollEnd").onclick=()=>scroller.scrollTo({left:scroller.scrollWidth,behavior:"smooth"});
+
+ scroller.addEventListener("wheel",e=>{
+  if(scroller.scrollWidth<=scroller.clientWidth)return;
+  const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  const max=scroller.scrollWidth-scroller.clientWidth;
+  const canMove=(delta<0&&scroller.scrollLeft>0)||(delta>0&&scroller.scrollLeft<max-1);
+  if(!canMove)return;
+  e.preventDefault();
+  scroller.scrollLeft+=delta;
+ },{passive:false});
+}
+setupComposerWorkspaceScroll();
