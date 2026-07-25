@@ -1,22 +1,44 @@
-# Gansey Studio v0.9.4 — Simplified Reordering + Stitch Offset
+# Gansey Studio v0.10.0 — Live Preview Phase
 
-## Changed
+This release begins the next development phase: a faster, more stable editing loop.
 
-- Removed drag-and-drop reordering for motif and spacer blocks.
-- Kept the reliable **Move Left** and **Move Right** buttons.
-- Added **Stitch offset** beside **Row offset**.
+## Live preview
 
-Dragging a motif from the motif library into a band is still available; only
-dragging existing blocks around to reorder them has been removed.
+The full chart preview now updates while you type into:
 
-## Stitch offset
+- Horizontal repeats
+- Vertical repeats
+- Row offset
+- Stitch offset
+- Gap before and after
+- Spacer width
+- Section heights and row counts
+- Target panel width
 
-- `0` leaves the motif in its normal position.
-- Positive numbers shift it to the right.
-- Negative numbers shift it to the left.
-- The block keeps the same total stitch width.
-- New empty stitches use the selected unused-row texture.
-- Large offsets may crop stitches at the opposite edge.
+Dropdown changes still apply immediately. The full composer card refreshes when an
+edit is committed, while the assembled chart updates continuously during editing.
+
+## Stitch offset corrected
+
+Stitch offset now behaves like a horizontal counterpart to row offset:
+
+- Positive values shift the motif pattern to the right.
+- Negative values shift it to the left.
+- The motif wraps cyclically instead of being cropped.
+- Gap before and gap after remain fixed.
+- The total motif-block width does not change.
+
+For example, a stitch offset of `1` moves the final stitch of each motif row to the
+front, shifting the visible pattern one stitch to the right.
+
+## Drag reordering removed
+
+Existing motif and spacer cards are no longer draggable. Reorder them with:
+
+- Move Left
+- Move Right
+
+Dragging a motif from the motif library into a band remains available.
 
 ## GitHub update
 
@@ -27,6 +49,6 @@ Replace:
 - `js/renderer.js`
 - `js/io.js`
 
-Uploading the entire v0.9.4 folder is also safe. Keep `css/` and `js/` intact.
+Uploading the entire v0.10.0 folder is also safe. Keep the `css/` and `js/` folders intact.
 
-Browser saves from v0.9.3 and earlier remain loadable.
+Browser saves from v0.9.4 and earlier remain loadable.

@@ -15,7 +15,16 @@ function motifTile(item){
  if(item.mirrored)base=base.map(r=>[...r].reverse());
  const horizontal=Array.from({length:base.length},()=>[]);
  for(let n=0;n<item.hRepeat;n++)base.forEach((r,i)=>horizontal[i].push(...r));
- return horizontal;
+
+ // Stitch offset is a cyclic horizontal phase shift of the motif itself.
+ // Positive values move the visible pattern right; negative values move it left.
+ const rawOffset=Number(item.stitchOffset||0);
+ return horizontal.map(row=>{
+  if(!row.length||!rawOffset)return row;
+  const rightShift=((rawOffset%row.length)+row.length)%row.length;
+  if(!rightShift)return row;
+  return [...row.slice(-rightShift),...row.slice(0,-rightShift)];
+ });
 }
 function naturalHeight(item){
  if(item.type==="spacer")return 0;
@@ -50,17 +59,7 @@ function verticalized(raw,panelH){
    return Array(w).fill(item.fillStitch);
  });
  const before=Math.max(0,+item.gapBefore||0),after=Math.max(0,+item.gapAfter||0);
- const stitchOffset=Number(item.stitchOffset||0);
- return rows.map(r=>{
-  let full=[...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)];
-  if(stitchOffset>0){
-   full=[...Array(stitchOffset).fill(item.fillStitch),...full].slice(0,full.length);
-  }else if(stitchOffset<0){
-   const amount=Math.min(full.length,Math.abs(stitchOffset));
-   full=[...full.slice(amount),...Array(amount).fill(item.fillStitch)];
-  }
-  return full;
- });
+ return rows.map(r=>[...Array(before).fill(item.fillStitch),...r,...Array(after).fill(item.fillStitch)]);
 }
 function itemWidth(raw){
  const i=normalizeItem(raw);

@@ -3,7 +3,7 @@ function control(label,html){return `<label>${label}${html}</label>`}
 function renderBandItems(section,host){
  const panel=section.items;
  const list=document.createElement("div");list.className="panel-list";
- if(!panel.length)list.innerHTML='<div class="drop-hint">Drag motifs here, use “Add selected motif,” or add a spacer. Reorder blocks by dragging.</div>';
+ if(!panel.length)list.innerHTML='<div class="drop-hint">Drag a motif here from the library, use “Add selected motif,” or add a spacer. Reorder existing blocks with Move Left and Move Right.</div>';
  list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};
  list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};
  list.ondrop=e=>{
@@ -13,17 +13,7 @@ function renderBandItems(section,host){
  };
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
-  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.dataset.sectionId=section.id;block.dataset.blockIndex=String(index);block.draggable=true;
-  block.ondragstart=e=>{
-   if(e.target.closest("button,input,select,label")){e.preventDefault();return}
-   dragIndex=index;block.classList.add("dragging");e.dataTransfer.effectAllowed="move"
-  };
-  block.ondragend=()=>{dragIndex=null;block.classList.remove("dragging")};
-  block.ondragover=e=>{if(dragIndex===null||dragIndex===index)return;e.preventDefault()};
-  block.ondrop=e=>{
-   if(dragIndex===null||dragIndex===index)return;e.preventDefault();e.stopPropagation();remember();
-   const moved=panel.splice(dragIndex,1)[0];panel.splice(index,0,moved);dragIndex=null;renderPanel()
-  };
+  const block=document.createElement("div");block.className="panel-block"+(item.type==="spacer"?" spacer-card":"");block.dataset.sectionId=section.id;block.dataset.blockIndex=String(index);
   if(item.type==="spacer"){
    block.innerHTML=`<button class="remove danger">×</button><span class="block-type">SPACER</span><h3>${item.stitch===P?"Purl":"Knit"} spacer</h3><div class="meta">${item.width} sts · fills section height</div>`;
    const controls=document.createElement("div");controls.className="block-controls";
@@ -180,42 +170,62 @@ $("sectionStack").addEventListener("click",e=>{
 });
 
 
-function updateBlockOption(control){
+function blockOptionContext(control){
  const card=control.closest(".panel-block");
- if(!card)return;
-
+ if(!card)return null;
  const section=panels[activePanel].find(s=>s.id===card.dataset.sectionId);
  const index=Number(card.dataset.blockIndex);
- if(!section||!Array.isArray(section.items)||!Number.isInteger(index)||!section.items[index])return;
+ if(!section||!Array.isArray(section.items)||!Number.isInteger(index)||!section.items[index])return null;
+ return {section,index,item:section.items[index]};
+}
 
- const key=control.dataset.field;
- let value;
+function controlValue(control){
  if(control.tagName==="INPUT"&&control.type==="number"){
-  value=Number(control.value);
-  if(!Number.isFinite(value))return;
- }else{
-  value=control.value;
+  const value=Number(control.value);
+  return Number.isFinite(value)?value:null;
+ }
+ return control.value;
+}
+
+function updateBlockOption(control,{finalize=false}={}){
+ const context=blockOptionContext(control);
+ if(!context)return;
+ const value=controlValue(control);
+ if(value===null)return;
+
+ if(control.dataset.historyCaptured!=="true"){
+  remember();
+  control.dataset.historyCaptured="true";
  }
 
- remember();
- section.items[index][key]=value;
- selectedSectionId=section.id;
- renderPanel();
+ context.item[control.dataset.field]=value;
+ selectedSectionId=context.section.id;
+
+ if(finalize)renderPanel();
+ else renderChart();
 }
+
+$("sectionStack").addEventListener("input",e=>{
+ const control=e.target.closest('input[data-field]');
+ if(!control)return;
+ e.stopPropagation();
+ updateBlockOption(control,{finalize:false});
+});
 
 $("sectionStack").addEventListener("change",e=>{
  const control=e.target.closest("[data-field]");
  if(!control)return;
  e.stopPropagation();
- updateBlockOption(control);
+ updateBlockOption(control,{finalize:true});
 });
 
 $("sectionStack").addEventListener("keydown",e=>{
  const control=e.target.closest('input[data-field][type="number"]');
  if(!control||e.key!=="Enter")return;
  e.preventDefault();
- updateBlockOption(control);
+ updateBlockOption(control,{finalize:true});
 });
+
 
 function renderPanel(){
  ensureSections();
@@ -291,11 +301,21 @@ function renderPanel(){
     control("Texture",`<select data-sec="stitch"><option value="knit"${section.stitch===K?" selected":""}>Knit</option><option value="purl"${section.stitch===P?" selected":""}>Purl</option></select>`);
    card.appendChild(settings);
   }
-  card.querySelectorAll("[data-sec]").forEach(el=>el.onchange=()=>{
-   remember();const key=el.dataset.sec;
-   let value=el.tagName==="INPUT"&&el.type==="number"?Number(el.value):el.value;
-   if(key==="mirrorAlternate")value=value==="true";
-   section[key]=value;renderPanel()
+  card.querySelectorAll("[data-sec]").forEach(el=>{
+   const applySectionValue=finalize=>{
+    let value=el.tagName==="INPUT"&&el.type==="number"?Number(el.value):el.value;
+    if(el.tagName==="INPUT"&&el.type==="number"&&!Number.isFinite(value))return;
+    if(el.dataset.historyCaptured!=="true"){
+     remember();
+     el.dataset.historyCaptured="true";
+    }
+    if(el.dataset.sec==="mirrorAlternate")value=value==="true";
+    section[el.dataset.sec]=value;
+    if(finalize)renderPanel();
+    else renderChart();
+   };
+   if(el.tagName==="INPUT")el.oninput=()=>applySectionValue(false);
+   el.onchange=()=>applySectionValue(true);
   });
   stack.appendChild(card);
  });
@@ -315,7 +335,9 @@ $("addFieldSection").onclick=()=>{remember();const s=makeFieldSection([]);panels
 $("addBandSection").onclick=()=>{remember();const s=makeBandSection([]);panels[activePanel].push(s);selectedSectionId=s.id;renderPanel()};
 $("addDividerSection").onclick=()=>{remember();const s=makeDividerSection();panels[activePanel].push(s);selectedSectionId=s.id;renderPanel()};
 $("clearPanel").onclick=()=>{if(!panels[activePanel].length)return;remember();panels[activePanel]=[];selectedSectionId=null;renderPanel()};
-$("targetWidth").oninput=renderPanel;$("targetWidth").onchange=()=>remember();
+$("targetWidth").onfocus=e=>{if(e.target.dataset.historyCaptured!=="true"){remember();e.target.dataset.historyCaptured="true"}};
+$("targetWidth").oninput=renderChart;
+$("targetWidth").onchange=e=>{e.target.dataset.historyCaptured="false";renderPanel()};
 
 $("undoBtn").onclick=undo;$("redoBtn").onclick=redo;
 document.addEventListener("keydown",e=>{
