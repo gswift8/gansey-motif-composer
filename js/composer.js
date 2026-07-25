@@ -2,14 +2,43 @@ function control(label,html){return `<label>${label}${html}</label>`}
 
 function renderBandItems(section,host){
  const panel=section.items;
- const list=document.createElement("div");list.className="panel-list";
+
+ const scroller=document.createElement("div");
+ scroller.className="panel-scroll-shell";
+
+ const nav=document.createElement("div");
+ nav.className="panel-scroll-nav";
+ nav.innerHTML=`
+  <div class="panel-scroll-label">Pattern elements</div>
+  <div class="panel-scroll-buttons">
+   <button type="button" class="ghost scroll-start" title="Scroll to first element">⇤</button>
+   <button type="button" class="ghost scroll-left" title="Scroll left">←</button>
+   <span class="panel-scroll-position" aria-live="polite"></span>
+   <button type="button" class="ghost scroll-right" title="Scroll right">→</button>
+   <button type="button" class="ghost scroll-end" title="Scroll to last element">⇥</button>
+  </div>`;
+
+ const list=document.createElement("div");
+ list.className="panel-list";
+ list.tabIndex=0;
+ list.setAttribute("role","region");
+ list.setAttribute("aria-label",`${section.name} pattern elements`);
  if(!panel.length)list.innerHTML='<div class="drop-hint">Drag a motif here from the library, use “Add selected motif,” or add a spacer. Reorder existing blocks with Move Left and Move Right.</div>';
  list.ondragover=e=>{e.preventDefault();list.classList.add("drag-over")};
  list.ondragleave=e=>{if(!list.contains(e.relatedTarget))list.classList.remove("drag-over")};
  list.ondrop=e=>{
   e.preventDefault();list.classList.remove("drag-over");
   const motifId=e.dataTransfer.getData("application/x-gansey-motif");
-  if(motifId){remember();panel.push(normalizeItem({type:"motif",motifId}));renderPanel()}
+  if(motifId){
+   remember();
+   panel.push(normalizeItem({type:"motif",motifId}));
+   selectedSectionId=section.id;
+   renderPanel();
+   requestAnimationFrame(()=>{
+    const active=document.querySelector(`.section-card[data-section-id="${section.id}"] .panel-list`);
+    if(active)active.scrollLeft=active.scrollWidth;
+   });
+  }
  };
  panel.forEach((raw,index)=>{
   const item=normalizeItem(raw);panel[index]=item;
@@ -53,7 +82,39 @@ function renderBandItems(section,host){
   };
   list.appendChild(block);
  });
- host.appendChild(list);
+ const position=nav.querySelector(".panel-scroll-position");
+ const updateScrollControls=()=>{
+  const max=Math.max(0,list.scrollWidth-list.clientWidth);
+  const current=Math.max(0,Math.min(max,list.scrollLeft));
+  const overflow=max>2;
+  nav.querySelector(".scroll-start").disabled=!overflow||current<=1;
+  nav.querySelector(".scroll-left").disabled=!overflow||current<=1;
+  nav.querySelector(".scroll-right").disabled=!overflow||current>=max-1;
+  nav.querySelector(".scroll-end").disabled=!overflow||current>=max-1;
+  position.textContent=overflow?`${Math.round(current)} / ${Math.round(max)} px`:"All elements visible";
+ };
+
+ const scrollAmount=()=>Math.max(240,Math.round(list.clientWidth*.72));
+ nav.querySelector(".scroll-start").onclick=()=>list.scrollTo({left:0,behavior:"smooth"});
+ nav.querySelector(".scroll-left").onclick=()=>list.scrollBy({left:-scrollAmount(),behavior:"smooth"});
+ nav.querySelector(".scroll-right").onclick=()=>list.scrollBy({left:scrollAmount(),behavior:"smooth"});
+ nav.querySelector(".scroll-end").onclick=()=>list.scrollTo({left:list.scrollWidth,behavior:"smooth"});
+
+ list.addEventListener("scroll",updateScrollControls,{passive:true});
+ list.addEventListener("wheel",e=>{
+  if(list.scrollWidth<=list.clientWidth)return;
+  const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  const max=list.scrollWidth-list.clientWidth;
+  const canMove=(delta<0&&list.scrollLeft>0)||(delta>0&&list.scrollLeft<max-1);
+  if(!canMove)return;
+  e.preventDefault();
+  list.scrollLeft+=delta;
+ },{passive:false});
+
+ scroller.append(nav,list);
+ host.appendChild(scroller);
+ requestAnimationFrame(updateScrollControls);
+
  const breakdown=document.createElement("div");breakdown.className="width-breakdown";
  panel.forEach((raw,i)=>{
   const item=normalizeItem(raw),m=item.type==="spacer"?null:motifs.find(x=>x.id===item.motifId),chip=document.createElement("span");
@@ -235,6 +296,7 @@ function renderPanel(){
  sections.forEach((section,index)=>{
   const card=document.createElement("div");
   card.className="section-card"+(section.id===selectedSectionId?" active-section":"");
+  card.dataset.sectionId=section.id;
   card.onclick=e=>{if(!e.target.closest("button,input,select,label")){selectedSectionId=section.id;renderPanel()}};
   const head=document.createElement("div");head.className="section-head";
   const title=document.createElement("div");
