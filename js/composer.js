@@ -376,6 +376,7 @@ function renderPanel(){
  });
  if(!sections.length)stack.innerHTML='<div class="drop-hint">Add a vertical band, horizontal band, or row divider to begin.</div>';
  renderChart();
+ if(typeof renderProjectOverview==="function")renderProjectOverview();
 }
 
 $("addSelected").onclick=()=>{

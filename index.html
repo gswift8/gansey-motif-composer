@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.11.1</title>
+<title>Gansey Studio v0.12.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Workspace Navigation v0.11.1</div>
+  <div class="badge">Project Builder v0.12.0</div>
 </header>
 
 <main>
@@ -180,6 +180,43 @@
     <div id="chartPreview" class="big-chart"></div><div class="preview-key"><span><i class="key-swatch"></i>Knit filler</span><span><i class="key-swatch purl"></i>Purl/reverse-stockinette filler</span></div>
   </div>
 
+
+  <div class="card" id="projectOverviewCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">5. Project builder</h2>
+        <p class="small" style="margin:5px 0 0">Review every garment panel, switch between panels, and copy a finished layout to another panel.</p>
+      </div>
+      <label class="project-name-field">Project name
+        <input id="projectName" type="text" value="Untitled Gansey" placeholder="Untitled Gansey">
+      </label>
+    </div>
+
+    <div class="project-copy-tools">
+      <div>
+        <div class="small">Copy the active panel</div>
+        <strong id="copySourceLabel">Front</strong>
+      </div>
+      <label>Destination
+        <select id="copyPanelTarget">
+          <option value="Back">Back</option>
+          <option value="Sleeve">Sleeve</option>
+          <option value="Gusset">Gusset</option>
+          <option value="Shoulder">Shoulder</option>
+        </select>
+      </label>
+      <label>Copy style
+        <select id="copyPanelMode">
+          <option value="exact">Exact copy</option>
+          <option value="mirror">Mirrored copy</option>
+        </select>
+      </label>
+      <button class="primary" id="copyPanelButton">Copy panel</button>
+    </div>
+
+    <div id="projectPanelOverview" class="project-panel-overview"></div>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -201,6 +238,7 @@
 <script defer src="js/composer.js"></script>
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
+<script defer src="js/project.js"></script>
 <script defer src="js/app.js"></script>
 
 </body>

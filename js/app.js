@@ -5,3 +5,4 @@ newMotif();
 ensureSections();
 updateHistoryUI();
 loadExternalLibrary(true);
+if(typeof renderProjectOverview==="function")renderProjectOverview();
