@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.17.0</title>
+<title>Gansey Studio v0.19.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Smart Repeat & Alignment v0.17.0</div>
+  <div class="badge">Print Studio v0.19.0</div>
 </header>
 
 <main>
@@ -354,6 +354,107 @@
     </p>
   </div>
 
+
+  <div class="card" id="printStudioCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">10. Print Studio</h2>
+        <p class="small" style="margin:5px 0 0">Build a clean chart sheet, export SVG or PNG, or open a print-ready document that can be saved as PDF.</p>
+      </div>
+      <button type="button" class="ghost" id="refreshPrintPreview">Refresh preview</button>
+    </div>
+
+    <div class="print-studio-layout">
+      <div class="print-controls">
+        <div class="print-control-grid">
+          <label>Export content
+            <select id="printScope">
+              <option value="panel">Active panel</option>
+              <option value="project">Entire project</option>
+              <option value="section">Selected section</option>
+              <option value="motif">Selected motif</option>
+            </select>
+          </label>
+          <label>Paper size
+            <select id="printPaper">
+              <option value="letter">US Letter</option>
+              <option value="a4">A4</option>
+            </select>
+          </label>
+          <label>Orientation
+            <select id="printOrientation">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </label>
+          <label>Chart scale
+            <select id="printScale">
+              <option value="1">100%</option>
+              <option value="1.25">125%</option>
+              <option value="1.5">150%</option>
+              <option value="2">200%</option>
+            </select>
+          </label>
+          <label>Row numbers
+            <select id="printRowNumbers">
+              <option value="1">Every row</option>
+              <option value="2">Every 2 rows</option>
+              <option value="5" selected>Every 5 rows</option>
+              <option value="10">Every 10 rows</option>
+              <option value="0">None</option>
+            </select>
+          </label>
+          <label>Stitch numbers
+            <select id="printStitchNumbers">
+              <option value="1">Every stitch</option>
+              <option value="5">Every 5 stitches</option>
+              <option value="10" selected>Every 10 stitches</option>
+              <option value="0">None</option>
+            </select>
+          </label>
+          <label>Visual style
+            <select id="printVisualStyle">
+              <option value="symbols">Symbols</option>
+              <option value="blocks">High-contrast blocks</option>
+            </select>
+          </label>
+          <label>Poster overlap
+            <select id="printOverlap">
+              <option value="0">No overlap</option>
+              <option value="2" selected>2 chart cells</option>
+              <option value="4">4 chart cells</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="print-checks">
+          <label><input type="checkbox" id="printTitle" checked> Title and panel summary</label>
+          <label><input type="checkbox" id="printLegend" checked> Stitch legend</label>
+          <label><input type="checkbox" id="printNotes" checked> Panel notes</label>
+          <label><input type="checkbox" id="printGuides" checked> Construction guides</label>
+          <label><input type="checkbox" id="printSectionLabels" checked> Section labels</label>
+          <label><input type="checkbox" id="printRepeatBrackets" checked> Repeat annotations</label>
+          <label><input type="checkbox" id="printRegistration" checked> Poster registration marks</label>
+        </div>
+
+        <div class="print-actions">
+          <button type="button" id="printSavePdf">Print / Save PDF</button>
+          <button type="button" id="printExportSvg">Export SVG</button>
+          <button type="button" id="printExportPng">Export PNG</button>
+        </div>
+        <div id="printStatus" class="small"></div>
+      </div>
+
+      <div class="print-preview-shell">
+        <div class="print-preview-toolbar">
+          <strong>Sheet preview</strong>
+          <span id="printPreviewMeta" class="small"></span>
+        </div>
+        <div id="printPreview" class="print-preview"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -374,6 +475,7 @@
 <script defer src="js/composer.js"></script>
 <script defer src="js/panel-specs.js"></script>
 <script defer src="js/smart-layout.js"></script>
+<script defer src="js/print-studio.js"></script>
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>

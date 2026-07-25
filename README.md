@@ -1,41 +1,45 @@
+# Gansey Studio v0.19.0 — Print Studio
 
-# Gansey Studio v0.18.0 — Motif Designer
+This release adds print-ready chart output to the working v0.17 application.
 
-Planned release:
+## Export formats
 
-## New Motif Designer
+- SVG
+- High-resolution PNG
+- Browser print document for printing or saving as PDF
 
-- Create motifs from scratch
-- Pixel editor with knit/purl and cable symbols
-- Live symmetry modes
-- Mirror horizontally/vertically
-- Rotate and flip
-- Resize canvas
-- Crop empty rows/columns
+## Export scopes
 
-## Library
+- Active panel
+- Entire project
+- Selected section
+- Selected motif
 
-- Save custom motifs
-- Categories and tags
-- Duplicate motifs
-- Export/import individual motifs
+## Sheet controls
 
-## Editing
+- US Letter or A4
+- Portrait or landscape
+- 100%, 125%, 150%, or 200% chart scale
+- Configurable row numbering
+- Configurable stitch numbering
+- Symbol or high-contrast block rendering
 
-- Undo/Redo
-- Rectangle fill
-- Line tool
-- Flood fill
-- Selection tool
-- Copy/Paste
+## Optional content
 
-## Preview
+- Project and panel title
+- Panel summary
+- Notes
+- Stitch legend
+- Section labels
+- Repeat brackets
+- Construction guides
+- Registration marks
 
-- Tile preview
-- Repeat preview
-- Inverted preview
-- Scale preview
+## Notes
 
-## Compatibility
+PDF output uses the browser's native print dialog. Choose “Save as PDF” after
+clicking “Print / Save PDF.” This keeps Gansey Studio dependency-free and usable
+offline.
 
-Designed as the next major milestone after Smart Repeat & Alignment.
+The prior v0.18 package was a roadmap-only specification, so this functional
+release is based on the last complete application build, v0.17.0.
