@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gansey Studio v0.19.0</title>
+<title>Gansey Studio v0.20.0</title>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -13,7 +13,7 @@
     <h1>Gansey Studio</h1>
     <div class="subtitle">Compose garment panels with a modular editor, band composer, stitch renderer, and full-chart preview.</div>
   </div>
-  <div class="badge">Print Studio v0.19.0</div>
+  <div class="badge">Pattern Generator v0.20.0</div>
 </header>
 
 <main>
@@ -455,6 +455,77 @@
     </div>
   </div>
 
+
+  <div class="card" id="patternGeneratorCard">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 style="margin:0">11. Pattern Generator</h2>
+        <p class="small" style="margin:5px 0 0">Turn panel specifications, gauge, and chart sections into an editable written pattern draft.</p>
+      </div>
+      <button type="button" class="ghost" id="refreshPatternDraft">Regenerate draft</button>
+    </div>
+
+    <div class="pattern-generator-layout">
+      <div class="pattern-controls">
+        <div class="pattern-control-grid">
+          <label>Pattern scope
+            <select id="patternScope">
+              <option value="project">Whole garment</option>
+              <option value="panel">Active panel only</option>
+            </select>
+          </label>
+          <label>Instruction detail
+            <select id="patternDetail">
+              <option value="full">Full instructions</option>
+              <option value="compact">Compact instructions</option>
+            </select>
+          </label>
+          <label>Units
+            <select id="patternUnits">
+              <option value="in">Inches</option>
+              <option value="cm">Centimeters</option>
+            </select>
+          </label>
+          <label>Construction style
+            <select id="patternConstruction">
+              <option value="seamed">Seamed panels</option>
+              <option value="hybrid">Hybrid / mixed</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="pattern-checks">
+          <label><input type="checkbox" id="patternIncludeGauge" checked> Gauge and measurements</label>
+          <label><input type="checkbox" id="patternIncludeLegend" checked> Stitch legend</label>
+          <label><input type="checkbox" id="patternIncludeNotes" checked> Panel notes</label>
+          <label><input type="checkbox" id="patternIncludeCounts" checked> Stitch-count checkpoints</label>
+          <label><input type="checkbox" id="patternIncludeAssembly" checked> Assembly section</label>
+          <label><input type="checkbox" id="patternIncludeDisclaimer" checked> Draft disclaimer</label>
+        </div>
+
+        <label>Designer notes
+          <textarea id="patternDesignerNotes" rows="5" placeholder="Optional notes to appear near the beginning of the pattern."></textarea>
+        </label>
+
+        <div class="pattern-actions">
+          <button type="button" id="patternCopy">Copy text</button>
+          <button type="button" id="patternDownloadTxt">Download TXT</button>
+          <button type="button" id="patternDownloadMd">Download Markdown</button>
+          <button type="button" class="ghost" id="patternPrint">Print / Save PDF</button>
+        </div>
+        <div id="patternStatus" class="small"></div>
+      </div>
+
+      <div class="pattern-draft-shell">
+        <div class="pattern-draft-toolbar">
+          <strong>Editable draft</strong>
+          <span id="patternDraftMeta" class="small"></span>
+        </div>
+        <textarea id="patternDraft" spellcheck="true"></textarea>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Project data</h2>
     <div class="io">
@@ -476,6 +547,7 @@
 <script defer src="js/panel-specs.js"></script>
 <script defer src="js/smart-layout.js"></script>
 <script defer src="js/print-studio.js"></script>
+<script defer src="js/pattern-generator.js"></script>
 <script defer src="js/preview.js"></script>
 <script defer src="js/io.js"></script>
 <script defer src="js/project.js"></script>

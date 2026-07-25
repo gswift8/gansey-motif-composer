@@ -121,6 +121,7 @@ function renderProjectOverview(){
  if(typeof renderPanelSpecifications==="function")renderPanelSpecifications();
  if(typeof renderSmartLayout==="function")renderSmartLayout();
  if(typeof renderPrintPreview==="function")renderPrintPreview();
+ if(typeof renderPatternDraft==="function")renderPatternDraft(true);
 }
 
 $("copyPanelButton").onclick=()=>{
