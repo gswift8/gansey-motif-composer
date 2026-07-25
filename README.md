@@ -1,35 +1,41 @@
-# Gansey Studio v0.17.0 — Smart Repeat & Alignment
 
-This release adds automated layout assistance for the active garment panel.
+# Gansey Studio v0.18.0 — Motif Designer
 
-## Active-panel analysis
+Planned release:
 
-Every vertical band, horizontal band, and divider is checked against the panel's
-working stitch count. Gansey Studio reports exact fits, leftover stitches, and
-sections that are too wide.
+## New Motif Designer
 
-## Smart actions
+- Create motifs from scratch
+- Pixel editor with knit/purl and cable symbols
+- Live symmetry modes
+- Mirror horizontally/vertically
+- Rotate and flip
+- Resize canvas
+- Crop empty rows/columns
 
-### Vertical bands
+## Library
 
-- Fit with balanced knit edge spacers
-- Reduce available horizontal repeats when a band is too wide
-- Auto-repeat a single motif as many times as possible
-- Add balanced edge spacers after auto-repeat
+- Save custom motifs
+- Categories and tags
+- Duplicate motifs
+- Export/import individual motifs
 
-### Horizontal bands
+## Editing
 
-- Center complete repeat units
-- Align repeat units to the left
-- Center all horizontal bands in one action
+- Undo/Redo
+- Rectangle fill
+- Line tool
+- Flood fill
+- Selection tool
+- Copy/Paste
 
-### Panel width
+## Preview
 
-Use the nearest lower or higher width compatible with the panel's repeat multiple
-and selvage specification.
+- Tile preview
+- Repeat preview
+- Inverted preview
+- Scale preview
 
-## Undo support
+## Compatibility
 
-Every smart mutation is captured in the existing Undo history.
-
-Existing v0.16 and earlier browser saves remain loadable.
+Designed as the next major milestone after Smart Repeat & Alignment.
