@@ -11,7 +11,8 @@ function assemblySettings(){
 
 function panelMatrix(panelName){
  const target=Math.max(1,+$("targetWidth").value||1);
- return (panels[panelName]||[]).flatMap(section=>sectionRows(section,target));
+ const matrix=(panels[panelName]||[]).flatMap(section=>sectionRows(section,target));
+ return shapedPanelMatrix(panelName,matrix,target);
 }
 
 function panelChartCellCount(panelName){

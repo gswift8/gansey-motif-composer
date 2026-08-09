@@ -35,7 +35,8 @@ function panelMotifCount(panelName){
 function createMiniPanelChart(panelName){
  const target=Math.max(1,+$("targetWidth").value||1);
  const sections=panels[panelName]||[];
- const matrix=sections.flatMap(section=>sectionRows(section,target));
+ let matrix=sections.flatMap(section=>sectionRows(section,target));
+ matrix=shapedPanelMatrix(panelName,matrix,target);
  const holder=document.createElement("div");
  holder.className="project-mini-chart";
 

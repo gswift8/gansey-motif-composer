@@ -1,4 +1,5 @@
 const collapsedTreeSections=new Set();
+const collapsedComposerSections=new Set();
 
 function control(label,html){return `<label>${label}${html}</label>`}
 
@@ -365,21 +366,35 @@ function renderPanel(){
   const title=document.createElement("div");
   title.innerHTML=`<span class="section-badge">${section.type==="field"?"VERTICAL BAND":section.type==="band"?"HORIZONTAL BAND":"ROW DIVIDER"}</span><h3>${section.name||"Section"}</h3><div class="section-summary">${sectionHeight(section)} rows</div>`;
   const tools=document.createElement("div");tools.className="section-tools";
-  tools.innerHTML='<button data-s="select">Select</button><button data-s="duplicate">Duplicate</button><button data-s="up">↑</button><button data-s="down">↓</button><button class="danger" data-s="delete">Delete</button>';
+  tools.innerHTML='<button type="button" data-s="collapse">Collapse</button><button type="button" data-s="select">Select</button><button type="button" data-s="duplicate">Duplicate</button><button type="button" data-s="top">⇈ Top</button><button type="button" data-s="up">↑</button><button type="button" data-s="down">↓</button><button type="button" data-s="bottom">⇊ Bottom</button><button type="button" class="danger" data-s="delete">Delete</button>';
   tools.querySelectorAll("button[data-s]").forEach(button=>{
    button.onclick=e=>{
     e.preventDefault();e.stopPropagation();
     const a=button.dataset.s;
+    if(a==="collapse"){
+     if(collapsedComposerSections.has(section.id))collapsedComposerSections.delete(section.id);
+     else collapsedComposerSections.add(section.id);
+     renderPanel();return;
+    }
     if(a==="select"){selectedSectionId=section.id;renderPanel();return}
     remember();
     if(a==="duplicate"){const copy=JSON.parse(JSON.stringify(section));copy.id=uid();sections.splice(index+1,0,copy);selectedSectionId=copy.id}
+    if(a==="top"&&index>0){sections.splice(index,1);sections.unshift(section)}
     if(a==="up"&&index>0)[sections[index-1],sections[index]]=[sections[index],sections[index-1]];
     if(a==="down"&&index<sections.length-1)[sections[index+1],sections[index]]=[sections[index],sections[index+1]];
+    if(a==="bottom"&&index<sections.length-1){sections.splice(index,1);sections.push(section)}
     if(a==="delete"){sections.splice(index,1);selectedSectionId=sections[Math.min(index,sections.length-1)]?.id||null}
     renderPanel();
    };
   });
+  const collapsed=collapsedComposerSections.has(section.id);
+  const collapseButton=tools.querySelector('[data-s="collapse"]');
+  if(collapseButton){
+   collapseButton.textContent=collapsed?"Expand":"Collapse";
+   collapseButton.setAttribute("aria-expanded",String(!collapsed));
+  }
   head.append(title,tools);card.appendChild(head);
+  if(collapsed){stack.appendChild(card);return}
 
   if(section.type==="field"){
    const settings=document.createElement("div");settings.className="section-settings";
@@ -399,7 +414,9 @@ function renderPanel(){
    settings.innerHTML=
     control("Band name",`<input data-sec="name" type="text" value="${section.name||"Horizontal band"}">`)+
     control("Vertical repeats",`<input data-sec="verticalRepeats" type="number" min="1" value="${section.verticalRepeats}">`)+
-    control("Fit across width",`<select data-sec="fitMode"><option value="center"${section.fitMode==="center"?" selected":""}>Center whole units</option><option value="left"${section.fitMode==="left"?" selected":""}>Start at left</option><option value="custom"${section.fitMode==="custom"?" selected":""}>Custom offset</option></select>`)+
+    control("Horizontal behavior",`<select data-sec="horizontalBehavior"><option value="fill"${section.horizontalBehavior!=="fixed"?" selected":""}>Fill section width</option><option value="fixed"${section.horizontalBehavior==="fixed"?" selected":""}>Use a fixed number of units</option></select>`)+
+    control("Fixed units",`<input data-sec="fixedUnits" type="number" min="1" value="${section.fixedUnits||1}" ${section.horizontalBehavior!=="fixed"?"disabled":""}>`)+
+    control("Unit alignment",`<select data-sec="fitMode"><option value="center"${section.fitMode==="center"?" selected":""}>Center whole units</option><option value="left"${section.fitMode==="left"?" selected":""}>Start at left</option><option value="custom"${section.fitMode==="custom"?" selected":""}>Custom left offset</option></select>`)+
     control("Left offset",`<input data-sec="offset" type="number" min="0" value="${section.offset}" ${section.fitMode!=="custom"?"disabled":""}>`)+
     control("Edge filler",`<select data-sec="filler"><option value="knit"${section.filler===K?" selected":""}>Knit</option><option value="purl"${section.filler===P?" selected":""}>Purl</option></select>`)+
     control("Repeated units",`<select data-sec="mirrorAlternate"><option value="false"${!section.mirrorAlternate?" selected":""}>Normal</option><option value="true"${section.mirrorAlternate?" selected":""}>Mirror every other</option></select>`)+
@@ -412,7 +429,9 @@ function renderPanel(){
    const leftover=unitW?target%unitW:target;
    if(unitW&&leftover){
     const warn=document.createElement("div");warn.className="section-warning";
-    warn.textContent=`The composed unit is ${unitW} stitches wide. ${leftover} stitch${leftover===1?"":"es"} will be filled at the edge${section.fitMode==="center"?"s":""}.`;
+    const units=section.horizontalBehavior==="fixed"?Math.max(1,Number(section.fixedUnits)||1):Math.floor(target/unitW);
+    const used=Math.min(target,units*unitW);
+    warn.textContent=`${units} complete unit${units===1?"":"s"} × ${unitW} stitches = ${used}; ${Math.max(0,target-used)} stitch${Math.max(0,target-used)===1?"":"es"} filled at the edge${section.fitMode==="center"?"s":""}.`;
     card.appendChild(warn);
    }
    const preview=document.createElement("div");preview.className="band-preview";
@@ -495,15 +514,19 @@ function setupComposerWorkspaceScroll(){
 setupComposerWorkspaceScroll();
 
 
-$("collapseAllTree").onclick=()=>{
+$("collapseAllTree").onclick=e=>{
+ e.preventDefault();
  ensureSections();
  panels[activePanel].forEach(section=>{
   if(Array.isArray(section.items)&&section.items.length)collapsedTreeSections.add(section.id);
+  collapsedComposerSections.add(section.id);
  });
- renderLayoutTree();
+ renderPanel();
 };
 
-$("expandAllTree").onclick=()=>{
+$("expandAllTree").onclick=e=>{
+ e.preventDefault();
  collapsedTreeSections.clear();
- renderLayoutTree();
+ collapsedComposerSections.clear();
+ renderPanel();
 };

@@ -24,7 +24,13 @@ function defaultPanelSpec(panelName){
   guideRepeats:false,
   guideUnderarm:false,
   guideSideSeams:true,
-  notes:""
+  notes:"",
+  gussetShape:panelName==="Gusset"?"diamond":"rectangle",
+  gussetPreset:"medium",
+  gussetTip:1,
+  gussetMaxWidth:Math.min(target,21),
+  gussetCenterRows:1,
+  gussetIncreaseEvery:2
  };
 }
 function ensurePanelSpecs(){
@@ -153,6 +159,34 @@ function renderPanelSpecifications(){
       </div>
     </div>
 
+    ${specActivePanel==="Gusset"?`
+    <div class="spec-subsection gusset-settings">
+      <strong>Gusset geometry</strong>
+      <p class="small">Traditional gussets default to a diamond chart. Cells outside the shaped gusset are disabled in previews.</p>
+      <div class="spec-grid">
+       <label>Shape
+        <select data-spec="gussetShape">
+         <option value="diamond"${spec.gussetShape==="diamond"?" selected":""}>Symmetrical diamond</option>
+         <option value="elongated"${spec.gussetShape==="elongated"?" selected":""}>Elongated diamond</option>
+         <option value="wide"${spec.gussetShape==="wide"?" selected":""}>Short / wide diamond</option>
+         <option value="rectangle"${spec.gussetShape==="rectangle"?" selected":""}>Rectangular chart</option>
+        </select>
+       </label>
+       <label>Size preset
+        <select data-spec="gussetPreset">
+         <option value="small"${spec.gussetPreset==="small"?" selected":""}>Small</option>
+         <option value="medium"${spec.gussetPreset==="medium"?" selected":""}>Medium</option>
+         <option value="large"${spec.gussetPreset==="large"?" selected":""}>Large</option>
+         <option value="custom"${spec.gussetPreset==="custom"?" selected":""}>Custom</option>
+        </select>
+       </label>
+       <label>Tip stitches<input data-spec="gussetTip" type="number" min="1" value="${spec.gussetTip}"></label>
+       <label>Maximum width<input data-spec="gussetMaxWidth" type="number" min="3" value="${spec.gussetMaxWidth}"></label>
+       <label>Center rows<input data-spec="gussetCenterRows" type="number" min="1" value="${spec.gussetCenterRows}"></label>
+       <label>Increase/decrease every<input data-spec="gussetIncreaseEvery" type="number" min="1" value="${spec.gussetIncreaseEvery}"></label>
+      </div>
+    </div>`:""}
+
     <label class="spec-notes">Panel notes
       <textarea data-spec="notes" rows="5" placeholder="Construction reminders, shaping plans, motif placement notes…">${escapeSpecValue(spec.notes)}</textarea>
     </label>
@@ -165,12 +199,19 @@ function renderPanelSpecifications(){
    const key=control.dataset.spec;
    spec[key]=control.type==="checkbox"?control.checked:
     control.type==="number"?Number(control.value):control.value;
+   if(key==="gussetPreset"){
+    const presets={small:{gussetTip:1,gussetMaxWidth:13,gussetCenterRows:1,gussetIncreaseEvery:2},
+      medium:{gussetTip:1,gussetMaxWidth:21,gussetCenterRows:1,gussetIncreaseEvery:2},
+      large:{gussetTip:1,gussetMaxWidth:29,gussetCenterRows:3,gussetIncreaseEvery:2}};
+    if(presets[spec.gussetPreset])Object.assign(spec,presets[spec.gussetPreset]);
+   }
    renderSpecDashboard();
    if(["working","repeatMultiple","selvage","centerMode"].includes(key)){
     const old=host.querySelector(".spec-validation");
     old?.replaceWith(renderSpecValidation(spec));
    }
-   if(key.startsWith("guide")&&typeof renderChart==="function")renderChart();
+   if((key.startsWith("guide")||key.startsWith("gusset"))&&typeof renderChart==="function")renderChart();
+   if(key==="gussetPreset")renderPanelSpecifications();
   });
  });
  renderSpecDashboard();

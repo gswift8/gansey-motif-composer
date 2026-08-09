@@ -90,6 +90,13 @@ function panelPatternText(metrics,opts){
  const unit=opts.units==="cm"?"cm":"in";
  const lines=[];
  lines.push(`# ${name}`);
+ if(name==="Gusset"&&typeof panelSpecs!=="undefined"){
+  const gs=panelSpecs.Gusset||{};
+  if((gs.gussetShape||"diamond")!=="rectangle"){
+   lines.push("");
+   lines.push(`Gusset geometry: ${String(gs.gussetShape||"diamond").replace(/_/g," ")}; begin with ${gs.gussetTip||1} tip stitch(es), increase symmetrically to ${gs.gussetMaxWidth||width} stitches, work ${gs.gussetCenterRows||1} center row(s), then decrease symmetrically to the tip.`);
+  }
+ }
  lines.push("");
  lines.push(`Cast on ${Math.max(1,Number(spec.castOn)||width)} stitches.`);
  if(Number(spec.castOn)!==width){

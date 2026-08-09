@@ -12,7 +12,10 @@ function normalizeItem(item){
 function motifTile(item){
  const m=motifs.find(x=>x.id===item.motifId);if(!m)return [[]];
  let base=repeatSlice(m).map(r=>[...r]);
- if(item.mirrored)base=base.map(r=>[...r].reverse());
+ if(item.mirrored){
+  const mirrorStitch=stitch=>stitch===CR?CL:stitch===CL?CR:stitch;
+  base=base.map(r=>[...r].reverse().map(mirrorStitch));
+ }
  const horizontal=Array.from({length:base.length},()=>[]);
  for(let n=0;n<item.hRepeat;n++)base.forEach((r,i)=>horizontal[i].push(...r));
 
@@ -80,7 +83,11 @@ function horizontalUnitRows(section){
 }
 function bandRows(section,target){
  const unit=horizontalUnitRows(section),unitH=Math.max(1,unit.length),unitW=Math.max(1,unit[0]?.length||1);
- const reps=Math.max(0,Math.floor(target/unitW)),used=reps*unitW,leftover=Math.max(0,target-used);
+ const fillUnits=Math.max(0,Math.floor(target/unitW));
+ const reps=section.horizontalBehavior==="fixed"
+  ?Math.max(1,Math.min(fillUnits||1,Number(section.fixedUnits)||1))
+  :fillUnits;
+ const used=Math.min(target,reps*unitW),leftover=Math.max(0,target-used);
  let before=0,after=leftover;
  if(section.fitMode==="center"){before=Math.floor(leftover/2);after=leftover-before}
  if(section.fitMode==="custom"){before=Math.max(0,Math.min(leftover,+section.offset||0));after=leftover-before}
@@ -111,4 +118,32 @@ function sectionHeight(section){
   return horizontalUnitRows(section).length*Math.max(1,+section.verticalRepeats||1);
  }
  return Math.max(1,+section.rows||1);
+}
+
+function shapedPanelMatrix(panelName,matrix,target){
+ if(panelName!=="Gusset"||typeof panelSpecs==="undefined")return matrix;
+ ensurePanelSpecs();
+ const spec=panelSpecs.Gusset||{};
+ if((spec.gussetShape||"diamond")==="rectangle")return matrix;
+ const rows=matrix.length;
+ if(!rows)return matrix;
+ const maxW=Math.max(3,Math.min(target,Number(spec.gussetMaxWidth)||target));
+ const tip=Math.max(1,Math.min(maxW,Number(spec.gussetTip)||1));
+ const centerRows=Math.max(1,Number(spec.gussetCenterRows)||1);
+ const shape=spec.gussetShape||"diamond";
+ const growth=shape==="wide"?1.45:shape==="elongated"?.72:1;
+ return matrix.map((row,r)=>{
+  const mid=(rows-1)/2;
+  const centerHalf=Math.max(0,(centerRows-1)/2);
+  const distance=Math.max(0,Math.abs(r-mid)-centerHalf);
+  const usableHalf=Math.max(1,mid-centerHalf);
+  const fraction=Math.max(0,1-distance/usableHalf);
+  const eased=Math.pow(fraction,growth);
+  let width=Math.round(tip+(maxW-tip)*eased);
+  if(width%2!==maxW%2)width=Math.max(tip,width-1);
+  width=Math.max(tip,Math.min(maxW,width));
+  const start=Math.floor((target-width)/2);
+  const normalized=[...row.slice(0,target),...Array(Math.max(0,target-row.length)).fill(K)].slice(0,target);
+  return normalized.map((v,c)=>c>=start&&c<start+width?v:"inactive");
+ });
 }

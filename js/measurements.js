@@ -90,9 +90,29 @@ function renderMeasurements(){
   button.classList.toggle("active",button.dataset.measureUnit===measurementUnit));
 }
 
+function validateGaugeInput(input){
+ const value=Number(input.value);
+ const max=input.id==="gaugeRows"?300:input.id==="gaugeStitches"?200:100;
+ const valid=Number.isFinite(value)&&value>0&&value<=max;
+ input.setCustomValidity(valid?"":`Enter a value greater than 0 and no more than ${max}.`);
+ input.classList.toggle("input-invalid",!valid);
+ return valid;
+}
+function roundGaugeRateToHalf(countId,sizeId){
+ const count=$(countId),size=$(sizeId);
+ if(!validateGaugeInput(count)||!validateGaugeInput(size))return;
+ const rate=Number(count.value)/Number(size.value);
+ const rounded=Math.round(rate*2)/2;
+ count.value=String(Math.round(rounded*Number(size.value)*10)/10);
+}
 ["gaugeStitches","gaugeWidth","gaugeRows","gaugeHeight"].forEach(id=>{
- $(id)?.addEventListener("input",renderMeasurements);
- $(id)?.addEventListener("change",renderMeasurements);
+ $(id)?.addEventListener("input",e=>{validateGaugeInput(e.target);renderMeasurements()});
+ $(id)?.addEventListener("change",e=>{
+  validateGaugeInput(e.target);
+  if(id==="gaugeStitches"||id==="gaugeWidth")roundGaugeRateToHalf("gaugeStitches","gaugeWidth");
+  if(id==="gaugeRows"||id==="gaugeHeight")roundGaugeRateToHalf("gaugeRows","gaugeHeight");
+  renderMeasurements();
+ });
 });
 
 document.querySelectorAll("[data-measure-unit]").forEach(button=>{

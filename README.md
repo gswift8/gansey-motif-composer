@@ -1,35 +1,22 @@
-# Gansey Studio v0.20.0 — Pattern Generator
+# Gansey Studio v0.20.1 — Editor Stabilization
 
-This release adds an editable written-pattern generator to the working application.
+This maintenance release implements the first focused fixes from the v0.20 regression test.
 
-## Generated content
+## Fixes and enhancements
+- Collapse All and Expand All now control both the Layout Tree and Section Composer.
+- Section cards can move to top, move up/down, move to bottom, duplicate, collapse, and delete.
+- Horizontal bands include an explicit **Horizontal behavior** control:
+  - Fill section width
+  - Fixed number of complete units
+  - Center, left, or custom-left-offset alignment
+  - Knit/purl edge filler
+  - Alternate-unit mirroring
+- Cable motifs use knitting-aware mirroring: left- and right-cross cable symbols swap.
+- Gauge values validate zero, negative, blank, and extreme entries and normalize calculated gauge to the nearest 0.5 stitch/row per unit.
+- Gusset specifications now include traditional diamond geometry, size presets, and custom tip/maximum-width/center-row settings.
+- Gusset previews, project thumbnails, and garment assembly use the same shaped matrix.
+- Project overview thumbnails now use the canonical panel matrix.
+- Version updated to v0.20.1.
 
-- Project title and designer notes
-- Gauge and approximate measurements
-- Whole-garment or active-panel instructions
-- Cast-on, working, and finished stitch counts
-- Panel construction metadata
-- Section-by-section chart sequence
-- Repeat and alignment descriptions
-- Optional stitch-count checkpoints
-- Panel notes
-- Stitch legend
-- Assembly draft
-- Verification disclaimer
-
-## Output
-
-- Editable in-app draft
-- Copy to clipboard
-- Plain-text download
-- Markdown download
-- Browser print / Save as PDF
-
-## Important limitation
-
-The generated pattern is intentionally labeled as a working draft. Gansey Studio
-does not yet generate neckline, armhole, sleeve-cap, shoulder, or other shaping.
-All counts and construction instructions must be verified before knitting or
-publishing.
-
-Existing v0.19 and earlier browser saves remain loadable.
+## Files
+Upload all files and folders together. `index.html` depends on `css/`, `js/`, and `motifs.json`.

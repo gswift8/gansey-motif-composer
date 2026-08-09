@@ -1,7 +1,12 @@
 function renderChart(){
  ensureSections();
  const target=Math.max(1,+$("targetWidth").value||1),sections=panels[activePanel];
- const all=sections.map(section=>({section,rows:sectionRows(section,target)}));
+ let all=sections.map(section=>({section,rows:sectionRows(section,target)}));
+ if(activePanel==="Gusset"){
+  const combined=shapedPanelMatrix("Gusset",all.flatMap(x=>x.rows),target);
+  let cursor=0;
+  all=all.map(entry=>{const rows=combined.slice(cursor,cursor+entry.rows.length);cursor+=entry.rows.length;return {section:entry.section,rows}});
+ }
  const totalH=all.reduce((s,x)=>s+x.rows.length,0);
  $("totalWidth").textContent=`${target} stitches`;$("totalWidth").className="total target-ok";
  $("totalHeight").textContent=`${totalH} rows`;

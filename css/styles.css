@@ -897,3 +897,10 @@ button:hover{transform:translateY(-1px)}
 #patternDraft:focus{outline:2px solid var(--peri);outline-offset:-2px}
 @media(max-width:920px){.pattern-generator-layout{grid-template-columns:1fr}#patternDraft{min-height:560px}}
 @media(max-width:540px){.pattern-control-grid,.pattern-checks{grid-template-columns:1fr}}
+
+.composed-cell.inactive,.band-cell.inactive,.project-mini-cell.inactive,.assembly-cell.inactive{
+ background:transparent!important;border-color:transparent!important;box-shadow:none!important;
+}
+.input-invalid{outline:2px solid #c65b68!important;background:#fff3f4!important}
+.gusset-settings{border:2px solid var(--peri);border-radius:16px;padding:12px;background:#faf9ff}
+.section-tools{flex-wrap:wrap}

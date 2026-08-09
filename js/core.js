@@ -11,7 +11,7 @@ function makeFieldSection(items=[]){
 function makeBandSection(items=[]){
  const migrated=Array.isArray(items)?items:(items?[{type:"motif",motifId:items}]:[]);
  return {id:uid(),type:"band",name:"Horizontal band",items:migrated.map(normalizeItem),
-   verticalRepeats:1,fitMode:"center",offset:0,filler:K,mirrorAlternate:false};
+   verticalRepeats:1,horizontalBehavior:"fill",fixedUnits:1,fitMode:"center",offset:0,filler:K,mirrorAlternate:false};
 }
 function makeDividerSection(){
  return {id:uid(),type:"divider",name:"Row divider",rows:2,stitch:P};
